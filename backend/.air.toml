@@ -1,0 +1,19 @@
+# Configuración global
+root = "."
+tmp_dir = "tmp"
+
+[build]
+# Comando para ejecutar tu aplicación
+cmd = "go build -o ./tmp/main ."
+# El binario que se generará
+bin = "./tmp/main"
+# Archivos a observar para reconstruir
+include_ext = ["go", "tpl", "tmpl", "html"]
+# Archivos/carpetas a ignorar
+exclude_dir = ["assets", "tmp", "vendor"]
+# Log del build
+log = "air_errors.log"
+
+[log]
+# Muestra el log en color
+color = true

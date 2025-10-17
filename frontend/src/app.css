@@ -1,0 +1,14 @@
+/* Importa las funcionalidades base de Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Aquí aplicamos los estilos globales a la etiqueta <body>.
+  Tailwind reemplazará `bg-background` y `text-text` con los colores
+  que definimos en `tailwind.config.cjs`. ¡Esta es la forma correcta!
+*/
+@layer base {
+  body {
+    @apply bg-background text-text;
+  }
+}

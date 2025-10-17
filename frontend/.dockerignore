@@ -1,0 +1,4 @@
+# Ignorar dependencias locales, SvelteKit y la salida de la compilación
+node_modules
+.svelte-kit
+build

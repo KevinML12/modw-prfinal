@@ -1,0 +1,26 @@
+# backend/Dockerfile.dev
+
+# Usamos la imagen completa de Go, ya que necesitamos las herramientas de compilación
+FROM golang:1.25-alpine
+
+# Establecemos el directorio de trabajo
+WORKDIR /app
+
+# Instalamos Air, la herramienta para hot-reloading en Go
+RUN go install github.com/air-verse/air@latest
+
+# Copiamos los archivos de dependencias para aprovechar el caché de Docker
+COPY go.mod go.sum ./
+
+# Descargamos las dependencias
+RUN go mod download
+
+# Copiamos el resto del código fuente. El volumen lo mantendrá sincronizado.
+COPY . .
+
+# Exponemos el puerto de nuestra API
+EXPOSE 8080
+
+# El comando para iniciar Air.
+# Air leerá la configuración, compilará y ejecutará nuestro main.go
+CMD ["air"]
