@@ -1,17 +1,18 @@
-// frontend/tailwind.config.cjs
+// Archivo: frontend/tailwind.config.cjs
+// (Ubicado en la raíz de /frontend)
 
+// 1. Importamos nuestra configuración de marca
+// La ruta es relativa a ESTE archivo
 const { brand } = require('./src/lib/config/brand.config.js');
 
 /** @type {import('tailwindcss').Config} */
-const config = {
-  // Archivos a los que Tailwind debe prestar atención para buscar clases.
+module.exports = {
+  // 2. Esta es la línea que fallaba al ser leída por Tailwind
   content: ['./src/**/*.{html,js,svelte,ts}'],
 
   theme: {
-    // Aquí extendemos el tema por defecto de Tailwind.
     extend: {
-      // Definimos nuestra paleta de colores personalizada.
-      // Ahora podemos usar clases como `bg-primary`, `text-accent`, etc.
+      // 3. Extendemos los colores de Tailwind con los nuestros
       colors: {
         primary: brand.identity.colors.primary,
         secondary: brand.identity.colors.secondary,
@@ -19,19 +20,14 @@ const config = {
         text: brand.identity.colors.text,
         accent: brand.identity.colors.accent,
       },
-      // Definimos nuestras familias de fuentes personalizadas.
-      // Ahora podemos usar `font-headings` y `font-body`.
+      // 4. Extendemos las fuentes de Tailwind con las nuestras
       fontFamily: {
         headings: [brand.identity.fonts.headings, 'serif'],
         body: [brand.identity.fonts.body, 'sans-serif'],
       },
     },
   },
-
   plugins: [
-    // Plugin oficial de Tailwind para estilizar formularios con clases.
-    require('@tailwindcss/forms'),
+    require('@tailwindcss/forms'), // Plugin útil para estilizar formularios
   ],
 };
-
-module.exports = config;

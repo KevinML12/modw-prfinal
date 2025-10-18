@@ -2,8 +2,7 @@
   import { brand } from '$lib/config/brand.config.js';
   import { cart } from '$lib/stores/cart.store.js';
 
-  const fonts = brand.identity.fonts;
-  const colors = brand.identity.colors;
+  // Solo necesitamos las reglas de negocio, los estilos ya están en Tailwind
   const shippingRules = brand.businessRules.shipping;
 
   let clientMunicipality = '';
@@ -47,53 +46,36 @@
   <title>Finalizar Compra | {brand.identity.name}</title>
 </svelte:head>
 
-<div
-  class="flex min-h-screen justify-center p-4 md:p-8"
-  style:background-color={colors.background}
->
+<div class="bg-background flex min-h-screen justify-center p-4 md:p-8">
   <div class="w-full max-w-4xl">
-    <h1
-      class="mb-8 text-center text-4xl"
-      style:font-family={fonts.headings}
-      style:color={colors.text}
-    >
+    <h1 class="font-headings text-text mb-8 text-center text-4xl">
       Finalizar Compra
     </h1>
 
     {#if $cart.length === 0}
       <div
-        class="rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm"
-        style:font-family={fonts.body}
+        class="font-body rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm"
       >
         <p class="text-xl text-gray-700">Tu carrito está vacío.</p>
         <a
           href="/"
-          class="mt-4 inline-block rounded-md px-6 py-2 text-white"
-          style:background-color={colors.primary}
-          on:mouseover={(e) =>
-            (e.target.style.backgroundColor = colors.secondary)}
-          on:mouseout={(e) =>
-            (e.target.style.backgroundColor = colors.primary)}
-          on:focus={(e) => (e.target.style.backgroundColor = colors.secondary)}
-          on:blur={(e) => (e.target.style.backgroundColor = colors.primary)}
+          class="bg-primary mt-4 inline-block rounded-md px-6 py-2 text-white hover:bg-secondary focus:bg-secondary"
         >
           Volver a la tienda
         </a>
       </div>
     {:else}
-      <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+      <div class="font-body grid grid-cols-1 gap-8 md:grid-cols-2">
         <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 class="mb-4 text-2xl" style:font-family={fonts.headings}>
-            Resumen de tu Orden
-          </h2>
+          <h2 class="font-headings mb-4 text-2xl">Resumen de tu Orden</h2>
 
           <div class="mb-4 space-y-3 border-b pb-4">
             {#each $cart as item (item.id)}
               <div class="flex justify-between">
-                <span style:font-family={fonts.body}>
+                <span>
                   {item.name} (x{item.quantity})
                 </span>
-                <span class="font-medium" style:font-family={fonts.body}>
+                <span class="font-medium">
                   {formatCurrency(item.price * item.quantity)}
                 </span>
               </div>
@@ -101,18 +83,16 @@
           </div>
 
           <div class="space-y-2">
-            <div class="flex justify-between" style:font-family={fonts.body}>
+            <div class="flex justify-between">
               <span>Subtotal:</span>
               <span>{formatCurrency(subtotal)}</span>
             </div>
-            <div class="flex justify-between" style:font-family={fonts.body}>
+            <div class="flex justify-between">
               <span>Envío ({shippingRules.nationalProvider}):</span>
               <span>{formatCurrency(shippingCost)}</span>
             </div>
             <div
-              class="flex justify-between border-t pt-2 text-xl font-bold"
-              style:font-family={fonts.headings}
-              style:color={colors.text}
+              class="font-headings text-text flex justify-between border-t pt-2 text-xl font-bold"
             >
               <span>Total:</span>
               <span>{formatCurrency(total)}</span>
@@ -121,16 +101,12 @@
         </div>
 
         <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 class="mb-4 text-2xl" style:font-family={fonts.headings}>
-            Información de Envío
-          </h2>
+          <h2 class="font-headings mb-4 text-2xl">Información de Envío</h2>
 
           <form on:submit|preventDefault={handlePayment} class="space-y-4">
             <div>
-              <label
-                for="name"
-                class="mb-1 block text-sm font-medium"
-                style:font-family={fonts.body}>Nombre Completo</label
+              <label for="name" class="mb-1 block text-sm font-medium"
+                >Nombre Completo</label
               >
               <input
                 type="text"
@@ -140,10 +116,8 @@
               />
             </div>
             <div>
-              <label
-                for="address"
-                class="mb-1 block text-sm font-medium"
-                style:font-family={fonts.body}>Dirección Completa</label
+              <label for="address" class="mb-1 block text-sm font-medium"
+                >Dirección Completa</label
               >
               <input
                 type="text"
@@ -153,10 +127,8 @@
               />
             </div>
             <div>
-              <label
-                for="municipality"
-                class="mb-1 block text-sm font-medium"
-                style:font-family={fonts.body}>Municipio</label
+              <label for="municipality" class="mb-1 block text-sm font-medium"
+                >Municipio</label
               >
               <input
                 type="text"
@@ -173,10 +145,8 @@
               </p>
             </div>
             <div>
-              <label
-                for="phone"
-                class="mb-1 block text-sm font-medium"
-                style:font-family={fonts.body}>Teléfono</label
+              <label for="phone" class="mb-1 block text-sm font-medium"
+                >Teléfono</label
               >
               <input
                 type="tel"
@@ -188,22 +158,13 @@
             <div
               class="rounded border border-dashed border-gray-400 bg-gray-50 p-4 text-center"
             >
-              <span class="text-gray-600" style:font-family={fonts.body}>
+              <span class="text-gray-600">
                 (Aquí iría el Componente de Pago Seguro)
               </span>
             </div>
             <button
               type="submit"
-              class="w-full rounded-md px-4 py-3 text-lg font-semibold text-white transition-colors duration-300"
-              style:background-color={colors.primary}
-              style:font-family={fonts.headings}
-              on:mouseover={(e) =>
-                (e.target.style.backgroundColor = colors.secondary)}
-              on:mouseout={(e) =>
-                (e.target.style.backgroundColor = colors.primary)}
-              on:focus={(e) =>
-                (e.target.style.backgroundColor = colors.secondary)}
-              on:blur={(e) => (e.target.style.backgroundColor = colors.primary)}
+              class="font-headings bg-primary w-full rounded-md px-4 py-3 text-lg font-semibold text-white transition-colors duration-300 hover:bg-secondary focus:bg-secondary"
             >
               Pagar {formatCurrency(total)}
             </button>

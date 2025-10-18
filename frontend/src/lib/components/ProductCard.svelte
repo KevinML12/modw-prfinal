@@ -8,9 +8,9 @@
    */
   export let product;
 
-  const fonts = brand.identity.fonts;
-  const colors = brand.identity.colors;
+  // 👇 Ya no necesitamos 'colors' ni 'fonts' aquí
 
+  // Formateador de moneda (Quetzales)
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('es-GT', {
       style: 'currency',
@@ -43,34 +43,23 @@
     <div>
       <a
         href={`/product/${product.id}`}
-        class="text-lg font-medium hover:underline"
-        style:font-family={fonts.headings}
-        style:color={colors.text}
+        class="font-headings text-text text-lg font-medium hover:underline"
       >
         {product.name}
       </a>
-      <p class="mt-1 text-sm text-gray-500" style:font-family={fonts.body}>
+      <p class="font-body mt-1 text-sm text-gray-500">
         {product.description.substring(0, 50)}...
       </p>
     </div>
 
     <div class="mt-4 flex items-center justify-between">
-      <p
-        class="text-xl font-semibold"
-        style:font-family={fonts.body}
-        style:color={colors.secondary}
-      >
+      <p class="font-body text-secondary text-xl font-semibold">
         {formatCurrency(product.price)}
       </p>
 
       <button
         on:click={handleAddToCart}
-        class="rounded-md px-3 py-1.5 text-sm font-medium text-white transition-colors"
-        style:background-color={colors.primary}
-        on:mouseover={(e) => (e.target.style.backgroundColor = colors.secondary)}
-        on:mouseout={(e) => (e.target.style.backgroundColor = colors.primary)}
-        on:focus={(e) => (e.target.style.backgroundColor = colors.secondary)}
-        on:blur={(e) => (e.target.style.backgroundColor = colors.primary)}
+        class="bg-primary rounded-md px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-secondary focus:bg-secondary"
       >
         Añadir
       </button>

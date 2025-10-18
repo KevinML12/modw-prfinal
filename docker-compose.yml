@@ -1,93 +1,82 @@
 # docker-compose.yml
-# Versión de la sintaxis de Docker Compose. '3.8' es una versión moderna y estable.
 version: '3.8'
 
-# Definición de todos los servicios que componen nuestra aplicación.
 services:
+
+  # --- Servicio de Ollama (IA Embeddings) ---
+  ollama:
+    container_name: phoenix_ollama
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - fenix-net # <-- Usa fenix-net
+
   # --- Servicio del Backend (Go + Gin) ---
-  # Se encarga de toda la lógica de negocio, API y comunicación con la base de datos.
   backend:
     container_name: phoenix_backend
-    # Construye la imagen de Docker para el backend usando el Dockerfile en la carpeta ./backend.
-    # Este Dockerfile lo crearemos en el siguiente paso.
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
-    # Mapea el puerto 8080 del contenedor al puerto 8080 de la máquina host.
-    # Así podemos acceder a la API desde nuestro navegador o Postman en http://localhost:8080.
     ports:
       - "8080:8080"
-    # Monta el código fuente del backend en el contenedor. Esto permite aplicar cambios
-    # en el código (hot-reloading) sin necesidad de reconstruir la imagen.
     volumes:
       - ./backend:/app
-    # Define las variables de entorno para el servicio de backend.
     environment:
       SUPABASE_URL: ${SUPABASE_URL}
       SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY}
-      GIN_MODE: debug # 'debug' para desarrollo, 'release' para producción.
-      MEILI_HOST: http://meilisearch:7700 # Dirección para conectar con MeiliSearch.
-      MEILI_MASTER_KEY: unaclavesupersecreta123 # Clave maestra para MeiliSearch.
-      # NOTA: Las credenciales de Supabase se agregarán aquí más adelante.
-    # Asegura que MeiliSearch se inicie antes que el backend, ya que este depende del buscador.
+      GIN_MODE: debug
+      MEILI_HOST: http://meilisearch:7700
+      MEILI_MASTER_KEY: unaclavesupersecreta123
+      OLLAMA_URL: http://ollama:11434 # <-- AÑADIDO
     depends_on:
       - meilisearch
-    # Política de reinicio: siempre reinicia el contenedor si se detiene, a menos que lo detengamos manualmente.
+      - ollama # <-- AÑADIDO
     restart: unless-stopped
     networks:
-      - phoenix_network
+      - fenix-net # <-- Usa fenix-net
 
   # --- Servicio del Frontend (SvelteKit) ---
-  # Es la interfaz de usuario con la que interactúan los clientes.
   frontend:
     container_name: phoenix_frontend
-    # Construye la imagen a partir del Dockerfile que crearemos más adelante en ./frontend.
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
     ports:
-      # Mapea el puerto 5173 (puerto de desarrollo por defecto de Vite/SvelteKit) al host.
       - "5173:5173"
     volumes:
       - ./frontend:/app
-      # Importante: Excluimos node_modules del montaje para usar los módulos instalados
-      # dentro del contenedor, evitando conflictos con los del host.
       - /app/node_modules
     depends_on:
       - backend
     restart: unless-stopped
     networks:
-      - phoenix_network
+      - fenix-net # <-- Usa fenix-net
 
   # --- Servicio de Búsqueda (MeiliSearch) ---
-  # Motor de búsqueda instantánea para una experiencia de usuario superior.
   meilisearch:
     container_name: phoenix_meilisearch
-    # Usa una imagen oficial y optimizada de MeiliSearch.
-    image: getmeili/meilisearch:v1.3
+    image: getmeili/meilisearch:v1.3 # Considera usar una versión más reciente si hay
     ports:
-      # Expone el puerto de MeiliSearch para poder acceder a su panel de control o API si es necesario.
       - "7700:7700"
     environment:
-      # La clave maestra es necesaria para proteger los endpoints de la API.
       - MEILI_MASTER_KEY=unaclavesupersecreta123
-      # Usamos 'development' para desactivar la necesidad de autenticación en las búsquedas
-      # y tener volcados de datos más informativos durante el desarrollo.
       - MEILI_ENV=development
     volumes:
-      # 'meili_data' es un volumen nombrado. Docker lo gestiona para persistir los datos
-      # (índices, documentos, etc.) aunque el contenedor se elimine y se vuelva a crear.
       - meili_data:/meili_data
     restart: unless-stopped
     networks:
-      - phoenix_network
+      - fenix-net # <-- Usa fenix-net
 
-# Definición de las redes personalizadas para la comunicación entre contenedores.
+# Definición de las redes personalizadas
 networks:
-  phoenix_network:
+  fenix-net: # <-- Usa fenix-net
     driver: bridge
 
-# Definición de los volúmenes nombrados para la persistencia de datos.
+# Definición de los volúmenes nombrados
 volumes:
+  ollama_data:
   meili_data:
     driver: local

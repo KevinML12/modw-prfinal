@@ -37,6 +37,6 @@ declare module "$app/types" {
 		};
 		Pathname(): "/" | "/checkout" | "/checkout/";
 		ResolvedPathname(): `${"" | `/${string}`}${ReturnType<AppTypes['Pathname']>}`;
-		Asset(): string & {};
+		Asset(): "/manifest.json" | string & {};
 	}
 }

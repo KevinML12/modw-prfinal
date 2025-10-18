@@ -1,101 +1,286 @@
 package controllers
 
 import (
-	"encoding/json" // <-- 1. IMPORTAR EL PAQUETE JSON
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"os"
+	"strconv"
 
 	"moda-organica/backend/db"
 	"moda-organica/backend/models"
+	"moda-organica/backend/services"
 
 	"github.com/gin-gonic/gin"
 )
 
-// ProductController (vacío por ahora, pero mantiene la estructura)
+// ProductController struct
 type ProductController struct{}
 
-// NewProductController es el constructor para nuestro controlador.
+// NewProductController constructor
 func NewProductController() *ProductController {
 	return &ProductController{}
 }
 
-// --- Handlers de la API ---
-
-// GetProducts maneja la petición GET /products.
-// Devuelve una lista de todos los productos desde Supabase.
+// GetProducts maneja GET /api/v1/products
 func (pc *ProductController) GetProducts(c *gin.Context) {
-	var products []models.Product // Un slice para almacenar los resultados
-
-	// --- Lógica de Supabase (CORREGIDA) ---
-	// 1. Select(columns, count, head) -> count="" y head=false para un select normal
-	// 2. Execute() no toma argumentos y devuelve (data, count, error)
+	var products []models.Product
 	data, _, err := db.Client.From("products").Select("*", "", false).Execute()
-
 	if err != nil {
 		log.Printf("Error al consultar productos: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Error al obtener los productos",
-		})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al obtener los productos"})
 		return
 	}
-
-	// 3. Debemos decodificar el JSON (data es []byte) a nuestro slice
 	if err := json.Unmarshal(data, &products); err != nil {
 		log.Printf("Error al decodificar JSON de productos: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al procesar la respuesta de la base de datos"})
 		return
 	}
-	// --- Fin de la lógica de Supabase ---
-
 	c.JSON(http.StatusOK, products)
 }
 
-// GetProductByID maneja la petición GET /products/:id.
-// Busca y devuelve un único producto por su ID desde Supabase.
+// GetProductByID maneja GET /api/v1/products/:id
 func (pc *ProductController) GetProductByID(c *gin.Context) {
-	// Obtenemos el 'id' de los parámetros de la URL.
 	id := c.Param("id")
-
 	var product models.Product
-
-	// --- Lógica de Supabase (CORREGIDA) ---
-	// Usamos .Single() para indicar que esperamos un solo objeto JSON, no un array
 	data, _, err := db.Client.From("products").Select("*", "", false).Eq("id", id).Single().Execute()
-
 	if err != nil {
-		// Este error ahora sí captura "no rows returned" (PGRST116)
-		log.Printf("Error al consultar producto por ID: %v", err)
+		log.Printf("Error al consultar producto por ID %s: %v", id, err)
 		c.JSON(http.StatusNotFound, gin.H{"error": "Producto no encontrado"})
 		return
 	}
-
-	// Decodificamos el objeto JSON único
 	if err := json.Unmarshal(data, &product); err != nil {
-		log.Printf("Error al decodificar JSON de producto: %v", err)
+		log.Printf("Error al decodificar JSON de producto ID %s: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al procesar la respuesta de la base de datos"})
 		return
 	}
-	// --- Fin de la lógica de Supabase ---
-
 	c.JSON(http.StatusOK, product)
 }
 
-// SemanticSearchProducts maneja la petición POST /products/search
-// (Dejamos la simulación por ahora)
-func (pc *ProductController) SemanticSearchProducts(c *gin.Context) {
-	var requestBody struct {
-		Query string `json:"query"`
-	}
+// --- Estructura para Crear/Actualizar Productos ---
+type ProductInput struct {
+	Name        *string  `json:"name"`
+	Description *string  `json:"description"`
+	Price       *float64 `json:"price"`
+	Stock       *int     `json:"stock"`
+	ImageURL    *string  `json:"image_url"`
+	CategoryID  *int     `json:"category_id"`
+}
 
-	if err := c.ShouldBindJSON(&requestBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Cuerpo de la petición inválido"})
+// Helper para obtener valor o string vacío si es nil
+func getStringOrDefault(s *string) string {
+	if s != nil {
+		return *s
+	}
+	return ""
+}
+
+// CreateProduct maneja POST /api/v1/products
+func (pc *ProductController) CreateProduct(c *gin.Context) {
+	var input ProductInput
+	if err := c.ShouldBindJSON(&input); err != nil || input.Name == nil || input.Price == nil || input.Stock == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Cuerpo de la petición inválido o faltan campos requeridos (name, price, stock)"})
 		return
 	}
 
-	mockResult := []models.Product{
-		{ID: 1, Name: "Resultado Simulado 1", Price: 100},
-		{ID: 3, Name: "Resultado Simulado 2", Price: 200},
+	newProductData := map[string]interface{}{
+		"name":        *input.Name,
+		"description": getStringOrDefault(input.Description),
+		"price":       *input.Price,
+		"stock":       *input.Stock,
+		"image_url":   getStringOrDefault(input.ImageURL),
+		"category_id": input.CategoryID,
+	}
+	var createdProduct models.Product
+
+	// --- CORRECCIÓN INSERT: Usar Execute() y Unmarshal ---
+	// 1. Insertar datos, pidiendo 'representation' en el segundo argumento
+	// El tercer argumento (count) se deja vacío ""
+	insertResultBytes, _, err := db.Client.From("products").Insert(newProductData, false, "representation", "", "").Single().Execute()
+	if err != nil {
+		log.Printf("Error al crear producto en Supabase: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al guardar el producto"})
+		return
+	}
+	// 2. Decodificar el resultado
+	if err := json.Unmarshal(insertResultBytes, &createdProduct); err != nil {
+		log.Printf("Error al decodificar producto creado: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al procesar la respuesta de la base de datos"})
+		return
+	}
+	// --- FIN CORRECCIÓN INSERT ---
+
+	// Generar y guardar embedding (sin cambios)
+	textToEmbed := fmt.Sprintf("%s: %s", createdProduct.Name, createdProduct.Description)
+	embedding, errEmbed := services.GetEmbedding(textToEmbed)
+	if errEmbed != nil {
+		log.Printf("Error al generar embedding para nuevo producto ID %d: %v. Se guardará sin embedding.", createdProduct.ID, errEmbed)
+	} else {
+		embeddingUpdate := map[string]interface{}{"embedding": embedding}
+		// Usamos Update normal aquí, no necesitamos la representación
+		_, _, updateErr := db.Client.From("products").Update(embeddingUpdate, "", "").Eq("id", fmt.Sprintf("%d", createdProduct.ID)).Execute()
+		if updateErr != nil {
+			log.Printf("Error al guardar embedding para nuevo producto ID %d: %v", createdProduct.ID, updateErr)
+		} else {
+			log.Printf("Embedding generado y guardado para nuevo producto ID %d.", createdProduct.ID)
+		}
 	}
 
-	c.JSON(http.StatusOK, mockResult)
+	c.JSON(http.StatusCreated, createdProduct)
+}
+
+// UpdateProduct maneja PUT /api/v1/products/:id
+func (pc *ProductController) UpdateProduct(c *gin.Context) {
+	idStr := c.Param("id")
+	productID, err := strconv.Atoi(idStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID de producto inválido"})
+		return
+	}
+
+	var input ProductInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Cuerpo de la petición inválido: " + err.Error()})
+		return
+	}
+
+	updateData := make(map[string]interface{})
+	needsEmbeddingUpdate := false
+	if input.Name != nil { /* ... */
+		updateData["name"] = *input.Name
+		needsEmbeddingUpdate = true
+	}
+	if input.Description != nil { /* ... */
+		updateData["description"] = *input.Description
+		needsEmbeddingUpdate = true
+	}
+	if input.Price != nil { /* ... */
+		updateData["price"] = *input.Price
+	}
+	if input.Stock != nil { /* ... */
+		updateData["stock"] = *input.Stock
+	}
+	if input.ImageURL != nil { /* ... */
+		updateData["image_url"] = *input.ImageURL
+	}
+	if input.CategoryID != nil { /* ... */
+		updateData["category_id"] = *input.CategoryID
+	}
+
+	if len(updateData) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No se proporcionaron campos para actualizar"})
+		return
+	}
+
+	var updatedProduct models.Product
+
+	// --- CORRECCIÓN UPDATE: Arreglar argumentos y usar Execute + Unmarshal ---
+	// 1. Llamar a Update con los argumentos correctos: (datos, returning, count)
+	//    Pedimos 'representation' en el segundo argumento. Count vacío "".
+	updateResultBytes, _, err := db.Client.From("products").Update(updateData, "representation", "").Eq("id", idStr).Single().Execute()
+	if err != nil {
+		log.Printf("Error al actualizar producto ID %s: %v", idStr, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al actualizar el producto"})
+		return
+	}
+	// 2. Decodificar el resultado
+	if err := json.Unmarshal(updateResultBytes, &updatedProduct); err != nil {
+		log.Printf("Error al decodificar producto actualizado ID %s: %v", idStr, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al procesar la respuesta de la base de datos"})
+		return
+	}
+	// --- FIN CORRECCIÓN UPDATE ---
+
+	// Regenerar y guardar embedding (sin cambios)
+	if needsEmbeddingUpdate {
+		log.Printf("Regenerando embedding para producto ID %d debido a cambio en nombre/descripción.", productID)
+		textToEmbed := fmt.Sprintf("%s: %s", updatedProduct.Name, updatedProduct.Description)
+		embedding, errEmbed := services.GetEmbedding(textToEmbed)
+		if errEmbed != nil {
+			log.Printf("Error al regenerar embedding para producto ID %d: %v", productID, errEmbed)
+		} else {
+			embeddingUpdate := map[string]interface{}{"embedding": embedding}
+			_, _, updateErr := db.Client.From("products").Update(embeddingUpdate, "", "").Eq("id", idStr).Execute() // Update simple
+			if updateErr != nil {
+				log.Printf("Error al guardar embedding actualizado para producto ID %d: %v", productID, updateErr)
+			} else {
+				log.Printf("Embedding actualizado para producto ID %d.", productID)
+			}
+		}
+	}
+
+	c.JSON(http.StatusOK, updatedProduct)
+}
+
+// --- Búsqueda Semántica (Usando HTTP Manual) ---
+// (Esta función se queda igual que la versión anterior que funcionó)
+type SearchRequest struct {
+	Query string `json:"query" binding:"required"`
+}
+
+// SemanticSearchProducts maneja POST /api/v1/products/search
+func (pc *ProductController) SemanticSearchProducts(c *gin.Context) {
+	var req SearchRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Cuerpo de la petición inválido: falta el campo 'query' o no es string"})
+		return
+	}
+
+	// 1. Obtener el embedding (¡Esta variable SÍ la necesitamos!)
+	queryEmbedding, err := services.GetEmbedding(req.Query)
+	if err != nil {
+		log.Printf("Error al obtener embedding para la consulta '%s': %v", req.Query, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al procesar la consulta de búsqueda"})
+		return
+	}
+
+	var searchResults []models.Product
+
+	// 2. Parámetros para la función SQL (¡Aquí usamos queryEmbedding!)
+	rpcParams := map[string]interface{}{
+		"query_embedding": queryEmbedding, // <-- CORREGIDO: Usar la variable
+		"match_threshold": 0.5,
+		"match_count":     10,
+	}
+
+	// --- Llamada HTTP Manual a PostgREST (Sin cambios en esta parte) ---
+	supabaseURL := os.Getenv("SUPABASE_URL")
+	supabaseKey := os.Getenv("SUPABASE_SERVICE_KEY")
+	if supabaseURL == "" || supabaseKey == "" { /* ... manejo error ... */
+		return
+	}
+	rpcURL := fmt.Sprintf("%s/rest/v1/rpc/match_products", supabaseURL)
+	payloadBytes, err := json.Marshal(rpcParams)
+	if err != nil { /* ... manejo error ... */
+		return
+	}
+	httpRequest, err := http.NewRequest("POST", rpcURL, bytes.NewBuffer(payloadBytes))
+	if err != nil { /* ... manejo error ... */
+		return
+	}
+	httpRequest.Header.Set("Content-Type", "application/json")
+	httpRequest.Header.Set("apikey", supabaseKey)
+	httpRequest.Header.Set("Authorization", "Bearer "+supabaseKey)
+	httpClient := &http.Client{}
+	httpResponse, err := httpClient.Do(httpRequest)
+	if err != nil { /* ... manejo error ... */
+		return
+	}
+	defer httpResponse.Body.Close()
+	responseBody, err := io.ReadAll(httpResponse.Body)
+	if err != nil { /* ... manejo error ... */
+		return
+	}
+	if httpResponse.StatusCode < 200 || httpResponse.StatusCode >= 300 { /* ... manejo error ... */
+		return
+	}
+	if err := json.Unmarshal(responseBody, &searchResults); err != nil { /* ... manejo error ... */
+		return
+	}
+	// --- FIN Llamada HTTP Manual ---
+
+	c.JSON(http.StatusOK, searchResults)
 }

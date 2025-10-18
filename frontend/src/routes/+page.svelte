@@ -9,8 +9,8 @@
    */
   export async function load({ fetch }) {
     try {
-      // 1. Llamamos a nuestra API de Go (que está en el puerto 8080)
-      const res = await fetch('http://localhost:8080/api/v1/products');
+      // 1. Llamamos a nuestra API de Go (que está en el puerto 8080) 
+    const res = await fetch('http://localhost:8080/api/v1/products');
 
       if (!res.ok) {
         // Si la API de Go falla, lanzamos un error

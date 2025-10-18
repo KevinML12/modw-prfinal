@@ -3,8 +3,7 @@
   import { brand } from '$lib/config/brand.config.js';
   import { cart } from '$lib/stores/cart.store.js';
 
-  const colors = brand.identity.colors;
-  const fonts = brand.identity.fonts;
+  // 👇 Ya no necesitamos 'colors' ni 'fonts' aquí
 
   $: itemCount = $cart.reduce((sum, item) => sum + item.quantity, 0);
 </script>
@@ -18,22 +17,14 @@
   />
 </svelte:head>
 
-<div
-  class="flex min-h-screen flex-col"
-  style:background-color={colors.background}
-  style:color={colors.text}
-  style:font-family={fonts.body}
->
+<div class="font-body text-text bg-background flex min-h-screen flex-col">
   <header
-    class="sticky top-0 z-50 w-full border-b border-gray-200/50 shadow-sm"
-    style:background-color={colors.background}
+    class="bg-background sticky top-0 z-50 w-full border-b border-gray-200/50 shadow-sm"
   >
     <nav class="mx-auto flex max-w-7xl items-center justify-between p-4">
       <a
         href="/"
-        class="text-2xl font-bold transition-opacity hover:opacity-80"
-        style:font-family={fonts.headings}
-        style:color={colors.text}
+        class="font-headings text-text text-2xl font-bold transition-opacity hover:opacity-80"
       >
         {brand.identity.name}
       </a>
@@ -41,26 +32,13 @@
       <div class="flex items-center space-x-6">
         <a
           href="/"
-          class="text-sm font-medium transition-colors"
-          style:color={colors.text}
-          on:mouseover={(e) => (e.target.style.color = colors.primary)}
-          on:mouseout={(e) => (e.target.style.color = colors.text)}
-          on:focus={(e) => (e.target.style.color = colors.primary)}
-          on:blur={(e) => (e.target.style.color = colors.text)}
+          class="text-text text-sm font-medium transition-colors hover:text-primary focus:text-primary"
         >
           Tienda
         </a>
-
         <a
           href="/checkout"
-          class="relative flex items-center rounded-full p-2 transition-colors"
-          style:color={colors.text}
-          on:mouseover={(e) =>
-            (e.target.style.backgroundColor = colors.primary + '20')}
-          on:mouseout={(e) => (e.target.style.backgroundColor = 'transparent')}
-          on:focus={(e) =>
-            (e.target.style.backgroundColor = colors.primary + '20')}
-          on:blur={(e) => (e.target.style.backgroundColor = 'transparent')}
+          class="text-text relative flex items-center rounded-full p-2 transition-colors hover:bg-primary/20 focus:bg-primary/20"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -79,8 +57,7 @@
 
           {#if itemCount > 0}
             <span
-              class="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold text-white"
-              style:background-color={colors.secondary}
+              class="bg-secondary absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold text-white"
             >
               {itemCount}
             </span>
@@ -94,15 +71,9 @@
     <slot />
   </main>
 
-  <footer
-    class="mt-16 w-full py-8"
-    style:background-color={colors.text + '08'}
-  >
-    <div
-      class="mx-auto max-w-7xl px-4 text-center"
-      style:color={colors.text + 'A0'}
-    >
-      <p class="text-sm" style:font-family={fonts.body}>
+  <footer class="bg-text/5 mt-16 w-full py-8">
+    <div class="text-text/60 mx-auto max-w-7xl px-4 text-center">
+      <p class="font-body text-sm">
         © {new Date().getFullYear()} {brand.identity.name}. Todos los derechos
         reservados.
       </p>
