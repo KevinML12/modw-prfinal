@@ -1,10 +1,54 @@
+<script context="module">
+  /**
+   * Esta es la función `load` de SvelteKit.
+   * Se ejecuta ANTES de que el componente se renderice.
+   * Es el lugar perfecto para cargar datos de una API.
+   *
+   * NOTA: `fetch` aquí es el `fetch` universal de SvelteKit,
+   * funciona tanto en el servidor como en el cliente.
+   */
+  export async function load({ fetch }) {
+    try {
+      // 1. Llamamos a nuestra API de Go (que está en el puerto 8080)
+      const res = await fetch('http://localhost:8080/api/v1/products');
+
+      if (!res.ok) {
+        // Si la API de Go falla, lanzamos un error
+        throw new Error(`Error ${res.status}: No se pudo conectar a la API de productos`);
+      }
+
+      // 2. Obtenemos el JSON con los productos reales de Supabase
+      const products = await res.json();
+
+      // 3. Pasamos los productos como 'props' a la página
+      return {
+        props: {
+          products: products || [], // Asegurarnos de pasar un array
+        },
+      };
+    } catch (error) {
+      console.error("Error cargando productos en +page.svelte:", error);
+      // Si todo falla (ej. el backend está caído), mostramos la página con productos vacíos
+      return {
+        props: {
+          products: [],
+          error: error.message,
+        },
+      };
+    }
+  }
+</script>
+
 <script>
-  // dentro de la etiqueta <script>
   import ProductCard from '$lib/components/ProductCard.svelte';
   import { brand } from '$lib/config/brand.config.js';
 
-  /** @type {import('./$types').PageData} */
-  export let data; // ¡SvelteKit automáticamente le pasa los datos desde +page.js aquí!
+  // Estos 'props' vienen de la función `load` de arriba
+  export let products = [];
+  export let error = null;
+
+  const fonts = brand.identity.fonts;
+  const colors = brand.identity.colors;
 </script>
 
 <svelte:head>
@@ -12,29 +56,33 @@
   <meta name="description" content={brand.seo.description} />
 </svelte:head>
 
-<div class="container mx-auto px-4 py-12">
-  <header class="text-center mb-10">
-    <h1 class="font-headings text-4xl font-bold text-text">
-      Nuestras Colecciones
-    </h1>
-    <p class="mt-2 font-body text-lg text-gray-600">
-      Piezas seleccionadas con esmero, inspiradas en la belleza natural.
-    </p>
-  </header>
-  
-  {#if data.error}
-    <div class="text-center font-body text-accent bg-red-100 p-4 rounded-md">
-      {data.error}
+<section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+  <h1
+    class="mb-8 text-center text-4xl font-bold tracking-tight md:text-5xl"
+    style:font-family={fonts.headings}
+    style:color={colors.text}
+  >
+    Nuestra Colección
+  </h1>
+
+  {#if error}
+    <div class="rounded-lg border border-red-300 bg-red-50 p-4 text-center">
+      <h3 class="font-bold text-red-800">Error al Cargar Productos</h3>
+      <p class="text-red-700">{error}</p>
+      <p class="mt-2 text-sm text-gray-600">
+        Asegúrate de que el contenedor del backend (`phoenix_backend`) esté corriendo.
+      </p>
     </div>
-  {:else if data.products.length === 0}
-    <p class="text-center font-body text-gray-500">
-      Actualmente no hay productos disponibles. Vuelve pronto.
-    </p>
-  {:else}
-    <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {#each data.products as product (product.id)}
-        <ProductCard {product} />
-      {/each}
+  {:else if products.length === 0}
+    <div class="text-center text-gray-500" style:font-family={fonts.body}>
+      <p class="text-xl">Aún no hay productos en la colección.</p>
+      <p>Pronto agregaremos nuevas piezas únicas.</p>
     </div>
   {/if}
-</div>
+
+  <div class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    {#each products as product (product.id)}
+      <ProductCard {product} />
+    {/each}
+  </div>
+</section>

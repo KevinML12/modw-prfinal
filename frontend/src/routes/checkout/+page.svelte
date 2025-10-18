@@ -1,125 +1,215 @@
 <script>
   import { brand } from '$lib/config/brand.config.js';
+  import { cart } from '$lib/stores/cart.store.js';
 
-  // --- Simulación de un Carrito de Compras ---
-  // En una aplicación real, estos datos vendrían de un store global de Svelte.
-  const mockCartItems = [
-    { id: 2, name: "Anillo 'Sol de Jade'", price: 680.00, quantity: 1, image_url: '/images/products/anillo-jade.jpg' },
-    { id: 4, name: "Pulsera 'Bosque Encantado'", price: 250.00, quantity: 2, image_url: '/images/products/pulsera-bosque.jpg' },
-  ];
+  const fonts = brand.identity.fonts;
+  const colors = brand.identity.colors;
+  const shippingRules = brand.businessRules.shipping;
 
-  // --- Estado del Formulario y Cálculos ---
-  let customerName = '';
-  let customerEmail = '';
-  let shippingAddress = '';
-  let shippingCity = ''; // La ciudad que ingresa el usuario.
-  let shippingPhone = '';
+  let clientMunicipality = '';
 
-  // --- Reactividad de Svelte (`$:`) ---
-  // Estas variables se recalculan AUTOMÁTICAMENTE cada vez que una de sus dependencias cambia.
+  $: subtotal = $cart.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
 
-  // 1. Calculamos el subtotal basado en los artículos del carrito.
-  $: subtotal = mockCartItems.reduce((total, item) => total + item.price * item.quantity, 0);
-
-  // 2. Calculamos el costo de envío. Esta es la lógica "Mahoraga" en acción.
   $: shippingCost = (() => {
-    // Normalizamos la entrada del usuario para una comparación robusta (minúsculas, sin espacios).
-    const normalizedCity = shippingCity.trim().toLowerCase();
-    
-    // Si la ciudad no ha sido ingresada, el costo es 0.
-    if (!normalizedCity) {
-      return 0;
+    const normalizedInput = clientMunicipality.toLowerCase().trim();
+    if (shippingRules.localZones.includes(normalizedInput)) {
+      return shippingRules.costs.local;
     }
-
-    // Comprobamos si la ciudad está en la lista de zonas locales de nuestra configuración.
-    if (brand.businessRules.shipping.localZones.includes(normalizedCity)) {
-      return brand.businessRules.shipping.costs.local;
-    }
-    
-    // Si no es local, aplicamos el costo nacional.
-    return brand.businessRules.shipping.costs.national;
+    return shippingRules.costs.national;
   })();
 
-  // 3. Calculamos el total final.
   $: total = subtotal + shippingCost;
 
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('es-GT', {
+      style: 'currency',
+      currency: 'GTQ',
+    }).format(value);
+  };
 
-  // --- Funciones Auxiliares ---
-  function formatCurrency(value) {
-    return new Intl.NumberFormat('es-GT', { style: 'currency', currency: 'GTQ' }).format(value);
-  }
-
-  function handlePlaceOrder() {
-    // Lógica para enviar el pedido al backend.
-    // Se implementará en el futuro.
-    alert('¡Pedido realizado! (Simulación)');
+  function handlePayment() {
+    console.log('Orden a procesar:', {
+      items: $cart,
+      shipping: {
+        municipality: clientMunicipality,
+        cost: shippingCost,
+      },
+      total: total,
+    });
+    alert('¡Procesando pago! (simulación)');
   }
 </script>
 
 <svelte:head>
-  <title>Finalizar Compra - {brand.identity.name}</title>
+  <title>Finalizar Compra | {brand.identity.name}</title>
 </svelte:head>
 
-<div class="container mx-auto max-w-4xl px-4 py-12">
-  <h1 class="font-headings text-3xl font-bold text-center mb-8 text-text">
-    Finalizar Compra
-  </h1>
+<div
+  class="flex min-h-screen justify-center p-4 md:p-8"
+  style:background-color={colors.background}
+>
+  <div class="w-full max-w-4xl">
+    <h1
+      class="mb-8 text-center text-4xl"
+      style:font-family={fonts.headings}
+      style:color={colors.text}
+    >
+      Finalizar Compra
+    </h1>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-    <section class="font-body">
-      <h2 class="font-headings text-xl font-semibold mb-4 text-text">Información de Envío</h2>
-      <form class="space-y-4">
-        <div>
-          <label for="name" class="block text-sm font-medium text-gray-700">Nombre Completo</label>
-          <input type="text" id="name" bind:value={customerName} class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring-secondary">
-        </div>
-        <div>
-          <label for="email" class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
-          <input type="email" id="email" bind:value={customerEmail} class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring-secondary">
-        </div>
-        <div>
-          <label for="address" class="block text-sm font-medium text-gray-700">Dirección</label>
-          <input type="text" id="address" bind:value={shippingAddress} class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring-secondary">
-        </div>
-        <div>
-          <label for="city" class="block text-sm font-medium text-gray-700">Municipio/Ciudad</label>
-          <input type="text" id="city" bind:value={shippingCity} placeholder="Ej: Huehuetenango" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring-secondary">
-        </div>
-      </form>
-    </section>
-
-    <section class="bg-background p-6 rounded-md shadow-sm border">
-      <h2 class="font-headings text-xl font-semibold mb-4 text-text">Resumen del Pedido</h2>
-      <div class="space-y-4">
-        {#each mockCartItems as item}
-          <div class="flex justify-between items-center font-body">
-            <span class="text-text">{item.name} x {item.quantity}</span>
-            <span class="font-medium text-gray-800">{formatCurrency(item.price * item.quantity)}</span>
-          </div>
-        {/each}
-      </div>
-      <hr class="my-4">
-      <div class="space-y-2 font-body">
-        <div class="flex justify-between">
-          <span class="text-gray-600">Subtotal</span>
-          <span class="font-medium text-text">{formatCurrency(subtotal)}</span>
-        </div>
-        <div class="flex justify-between">
-          <span class="text-gray-600">Envío</span>
-          <span class="font-medium text-text">{shippingCost > 0 ? formatCurrency(shippingCost) : 'Calculando...'}</span>
-        </div>
-      </div>
-      <hr class="my-4">
-      <div class="flex justify-between font-headings text-lg font-bold">
-        <span class="text-text">Total</span>
-        <span class="text-secondary">{formatCurrency(total)}</span>
-      </div>
-      <button 
-        on:click={handlePlaceOrder}
-        class="w-full mt-6 bg-accent text-white font-bold py-3 rounded-md hover:bg-opacity-90 transition-colors"
+    {#if $cart.length === 0}
+      <div
+        class="rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm"
+        style:font-family={fonts.body}
       >
-        Realizar Pedido
-      </button>
-    </section>
+        <p class="text-xl text-gray-700">Tu carrito está vacío.</p>
+        <a
+          href="/"
+          class="mt-4 inline-block rounded-md px-6 py-2 text-white"
+          style:background-color={colors.primary}
+          on:mouseover={(e) =>
+            (e.target.style.backgroundColor = colors.secondary)}
+          on:mouseout={(e) =>
+            (e.target.style.backgroundColor = colors.primary)}
+          on:focus={(e) => (e.target.style.backgroundColor = colors.secondary)}
+          on:blur={(e) => (e.target.style.backgroundColor = colors.primary)}
+        >
+          Volver a la tienda
+        </a>
+      </div>
+    {:else}
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+        <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-2xl" style:font-family={fonts.headings}>
+            Resumen de tu Orden
+          </h2>
+
+          <div class="mb-4 space-y-3 border-b pb-4">
+            {#each $cart as item (item.id)}
+              <div class="flex justify-between">
+                <span style:font-family={fonts.body}>
+                  {item.name} (x{item.quantity})
+                </span>
+                <span class="font-medium" style:font-family={fonts.body}>
+                  {formatCurrency(item.price * item.quantity)}
+                </span>
+              </div>
+            {/each}
+          </div>
+
+          <div class="space-y-2">
+            <div class="flex justify-between" style:font-family={fonts.body}>
+              <span>Subtotal:</span>
+              <span>{formatCurrency(subtotal)}</span>
+            </div>
+            <div class="flex justify-between" style:font-family={fonts.body}>
+              <span>Envío ({shippingRules.nationalProvider}):</span>
+              <span>{formatCurrency(shippingCost)}</span>
+            </div>
+            <div
+              class="flex justify-between border-t pt-2 text-xl font-bold"
+              style:font-family={fonts.headings}
+              style:color={colors.text}
+            >
+              <span>Total:</span>
+              <span>{formatCurrency(total)}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-2xl" style:font-family={fonts.headings}>
+            Información de Envío
+          </h2>
+
+          <form on:submit|preventDefault={handlePayment} class="space-y-4">
+            <div>
+              <label
+                for="name"
+                class="mb-1 block text-sm font-medium"
+                style:font-family={fonts.body}>Nombre Completo</label
+              >
+              <input
+                type="text"
+                id="name"
+                class="w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                required
+              />
+            </div>
+            <div>
+              <label
+                for="address"
+                class="mb-1 block text-sm font-medium"
+                style:font-family={fonts.body}>Dirección Completa</label
+              >
+              <input
+                type="text"
+                id="address"
+                class="w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                required
+              />
+            </div>
+            <div>
+              <label
+                for="municipality"
+                class="mb-1 block text-sm font-medium"
+                style:font-family={fonts.body}>Municipio</label
+              >
+              <input
+                type="text"
+                id="municipality"
+                class="w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                placeholder="Ej: Huehuetenango"
+                bind:value={clientMunicipality}
+                required
+              />
+              <p class="mt-1 text-xs text-gray-500">
+                Costo local ({formatCurrency(shippingRules.costs.local)}) aplica
+                para:
+                {shippingRules.localZones.join(', ')}.
+              </p>
+            </div>
+            <div>
+              <label
+                for="phone"
+                class="mb-1 block text-sm font-medium"
+                style:font-family={fonts.body}>Teléfono</label
+              >
+              <input
+                type="tel"
+                id="phone"
+                class="w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                required
+              />
+            </div>
+            <div
+              class="rounded border border-dashed border-gray-400 bg-gray-50 p-4 text-center"
+            >
+              <span class="text-gray-600" style:font-family={fonts.body}>
+                (Aquí iría el Componente de Pago Seguro)
+              </span>
+            </div>
+            <button
+              type="submit"
+              class="w-full rounded-md px-4 py-3 text-lg font-semibold text-white transition-colors duration-300"
+              style:background-color={colors.primary}
+              style:font-family={fonts.headings}
+              on:mouseover={(e) =>
+                (e.target.style.backgroundColor = colors.secondary)}
+              on:mouseout={(e) =>
+                (e.target.style.backgroundColor = colors.primary)}
+              on:focus={(e) =>
+                (e.target.style.backgroundColor = colors.secondary)}
+              on:blur={(e) => (e.target.style.backgroundColor = colors.primary)}
+            >
+              Pagar {formatCurrency(total)}
+            </button>
+          </form>
+        </div>
+      </div>
+    {/if}
   </div>
 </div>

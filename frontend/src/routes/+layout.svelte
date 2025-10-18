@@ -1,43 +1,114 @@
 <script>
-  // Importamos el objeto de configuración central de la marca.
-  import { brand } from '$lib/config/brand.config.js';
-
-  // Importamos la hoja de estilos global. Aquí es donde se inicializa Tailwind CSS.
-  // (Este archivo se crearía en la raíz de /src y contendría las directivas de Tailwind).
   import '../app.css';
+  import { brand } from '$lib/config/brand.config.js';
+  import { cart } from '$lib/stores/cart.store.js';
+
+  const colors = brand.identity.colors;
+  const fonts = brand.identity.fonts;
+
+  $: itemCount = $cart.reduce((sum, item) => sum + item.quantity, 0);
 </script>
 
 <svelte:head>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link 
-    href="https://fonts.googleapis.com/css2?family={brand.identity.fonts.headings.replace(' ', '+')}:wght@400;700&family={brand.identity.fonts.body.replace(' ', '+')}:wght@400;700&display=swap" 
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;700&display=swap"
     rel="stylesheet"
-  >
+  />
 </svelte:head>
 
-<div class="min-h-screen flex flex-col font-body">
-  <header class="shadow-md bg-background/95 sticky top-0 backdrop-blur-sm z-10">
-    <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-      <a href="/" class="font-headings text-2xl font-bold" style="color: {brand.identity.colors.primary};">
+<div
+  class="flex min-h-screen flex-col"
+  style:background-color={colors.background}
+  style:color={colors.text}
+  style:font-family={fonts.body}
+>
+  <header
+    class="sticky top-0 z-50 w-full border-b border-gray-200/50 shadow-sm"
+    style:background-color={colors.background}
+  >
+    <nav class="mx-auto flex max-w-7xl items-center justify-between p-4">
+      <a
+        href="/"
+        class="text-2xl font-bold transition-opacity hover:opacity-80"
+        style:font-family={fonts.headings}
+        style:color={colors.text}
+      >
         {brand.identity.name}
       </a>
-      <div class="font-body space-x-6 text-text">
-        <a href="/" class="hover:text-primary transition-colors">Inicio</a>
-        <a href="/about" class="hover:text-primary transition-colors">Nosotros</a>
-        <a href="/cart" class="hover:text-primary transition-colors">Carrito</a>
+
+      <div class="flex items-center space-x-6">
+        <a
+          href="/"
+          class="text-sm font-medium transition-colors"
+          style:color={colors.text}
+          on:mouseover={(e) => (e.target.style.color = colors.primary)}
+          on:mouseout={(e) => (e.target.style.color = colors.text)}
+          on:focus={(e) => (e.target.style.color = colors.primary)}
+          on:blur={(e) => (e.target.style.color = colors.text)}
+        >
+          Tienda
+        </a>
+
+        <a
+          href="/checkout"
+          class="relative flex items-center rounded-full p-2 transition-colors"
+          style:color={colors.text}
+          on:mouseover={(e) =>
+            (e.target.style.backgroundColor = colors.primary + '20')}
+          on:mouseout={(e) => (e.target.style.backgroundColor = 'transparent')}
+          on:focus={(e) =>
+            (e.target.style.backgroundColor = colors.primary + '20')}
+          on:blur={(e) => (e.target.style.backgroundColor = 'transparent')}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="h-6 w-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c.121.001.241.015.358.043a5.25 5.25 0 01-4.256 5.207H3.375a.75.75 0 01-.748-.686c-.03-1.667.988-3.033 2.67-3.268m11.438-6.75H5.625m13.5 0v1.149c0 .416-.16.816-.44 1.121l-4.04 4.041a.75.75 0 01-1.06 0l-4.041-4.041A1.875 1.875 0 015.625 8.649V7.5H19.5z"
+            />
+          </svg>
+
+          {#if itemCount > 0}
+            <span
+              class="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold text-white"
+              style:background-color={colors.secondary}
+            >
+              {itemCount}
+            </span>
+          {/if}
+        </a>
       </div>
     </nav>
   </header>
-  
+
   <main class="flex-grow">
     <slot />
   </main>
 
-  <footer class="bg-text text-background font-body mt-16 py-8">
-    <div class="container mx-auto text-center px-4">
-      <p>&copy; {new Date().getFullYear()} {brand.identity.name}. Todos los derechos reservados.</p>
-      <p class="text-sm mt-2 opacity-70">Desarrollado por Proyecto Fénix</p>
+  <footer
+    class="mt-16 w-full py-8"
+    style:background-color={colors.text + '08'}
+  >
+    <div
+      class="mx-auto max-w-7xl px-4 text-center"
+      style:color={colors.text + 'A0'}
+    >
+      <p class="text-sm" style:font-family={fonts.body}>
+        © {new Date().getFullYear()} {brand.identity.name}. Todos los derechos
+        reservados.
+      </p>
+      <p class="mt-2 text-xs">
+        Construido con SvelteKit, Go y Supabase para el Proyecto Fénix.
+      </p>
     </div>
   </footer>
 </div>

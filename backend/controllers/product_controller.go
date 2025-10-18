@@ -1,27 +1,17 @@
-// backend/controllers/product_controller.go
 package controllers
 
 import (
+	"encoding/json" // <-- 1. IMPORTAR EL PAQUETE JSON
+	"log"
 	"net/http"
-	"strconv"
 
-	"phoenix/models" // Importamos nuestros modelos de datos.
+	"moda-organica/backend/db"
+	"moda-organica/backend/models"
 
 	"github.com/gin-gonic/gin"
 )
 
-// --- Simulación de Base de Datos (Mock Data) ---
-// En un proyecto real, estos datos vendrían de una consulta a la base de datos (Supabase).
-// Usamos esto temporalmente para poder construir y probar el frontend.
-var mockProducts = []models.Product{
-	{ID: 1, SKU: "MO-J-001", Name: "Collar 'Luna Mística'", Description: "Elegante collar de plata con un colgante de piedra lunar.", Price: 450.00, Stock: 15, ImageURL: "/images/products/collar-luna.jpg"},
-	{ID: 2, SKU: "MO-J-002", Name: "Anillo 'Sol de Jade'", Description: "Anillo artesanal con una pieza central de jade guatemalteco.", Price: 680.00, Stock: 8, ImageURL: "/images/products/anillo-jade.jpg"},
-	{ID: 3, SKU: "MO-J-003", Name: "Aretes 'Gota de Rocío'", Description: "Delicados aretes de oro laminado con cristales de topacio.", Price: 325.00, Stock: 25, ImageURL: "/images/products/aretes-topacio.jpg"},
-	{ID: 4, SKU: "MO-A-001", Name: "Pulsera 'Bosque Encantado'", Description: "Pulsera de cuero con dijes de plata y motivos de la naturaleza.", Price: 250.00, Stock: 30, ImageURL: "/images/products/pulsera-bosque.jpg"},
-}
-
-// ProductController es un struct que agrupará los handlers de producto.
-// En el futuro, contendrá la conexión a la base de datos (ej: DB *gorm.DB).
+// ProductController (vacío por ahora, pero mantiene la estructura)
 type ProductController struct{}
 
 // NewProductController es el constructor para nuestro controlador.
@@ -32,57 +22,80 @@ func NewProductController() *ProductController {
 // --- Handlers de la API ---
 
 // GetProducts maneja la petición GET /products.
-// Devuelve una lista de todos los productos disponibles.
+// Devuelve una lista de todos los productos desde Supabase.
 func (pc *ProductController) GetProducts(c *gin.Context) {
-	// Por ahora, simplemente devolvemos nuestra lista de productos de prueba.
-	c.JSON(http.StatusOK, mockProducts)
-}
+	var products []models.Product // Un slice para almacenar los resultados
 
-// GetProductByID maneja la petición GET /products/:id.
-// Busca y devuelve un único producto por su ID.
-func (pc *ProductController) GetProductByID(c *gin.Context) {
-	// Obtenemos el 'id' de los parámetros de la URL.
-	idStr := c.Param("id")
-	id, err := strconv.Atoi(idStr)
+	// --- Lógica de Supabase (CORREGIDA) ---
+	// 1. Select(columns, count, head) -> count="" y head=false para un select normal
+	// 2. Execute() no toma argumentos y devuelve (data, count, error)
+	data, _, err := db.Client.From("products").Select("*", "", false).Execute()
+
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido"})
+		log.Printf("Error al consultar productos: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Error al obtener los productos",
+		})
 		return
 	}
 
-	// Buscamos el producto en nuestra lista de prueba.
-	for _, product := range mockProducts {
-		if product.ID == uint(id) {
-			c.JSON(http.StatusOK, product)
-			return
-		}
+	// 3. Debemos decodificar el JSON (data es []byte) a nuestro slice
+	if err := json.Unmarshal(data, &products); err != nil {
+		log.Printf("Error al decodificar JSON de productos: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al procesar la respuesta de la base de datos"})
+		return
+	}
+	// --- Fin de la lógica de Supabase ---
+
+	c.JSON(http.StatusOK, products)
+}
+
+// GetProductByID maneja la petición GET /products/:id.
+// Busca y devuelve un único producto por su ID desde Supabase.
+func (pc *ProductController) GetProductByID(c *gin.Context) {
+	// Obtenemos el 'id' de los parámetros de la URL.
+	id := c.Param("id")
+
+	var product models.Product
+
+	// --- Lógica de Supabase (CORREGIDA) ---
+	// Usamos .Single() para indicar que esperamos un solo objeto JSON, no un array
+	data, _, err := db.Client.From("products").Select("*", "", false).Eq("id", id).Single().Execute()
+
+	if err != nil {
+		// Este error ahora sí captura "no rows returned" (PGRST116)
+		log.Printf("Error al consultar producto por ID: %v", err)
+		c.JSON(http.StatusNotFound, gin.H{"error": "Producto no encontrado"})
+		return
 	}
 
-	// Si el bucle termina y no encontramos el producto, devolvemos un error 404.
-	c.JSON(http.StatusNotFound, gin.H{"error": "Producto no encontrado"})
+	// Decodificamos el objeto JSON único
+	if err := json.Unmarshal(data, &product); err != nil {
+		log.Printf("Error al decodificar JSON de producto: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al procesar la respuesta de la base de datos"})
+		return
+	}
+	// --- Fin de la lógica de Supabase ---
+
+	c.JSON(http.StatusOK, product)
 }
 
 // SemanticSearchProducts maneja la petición POST /products/search
-// Esta es la funcionalidad estrella que usará IA.
+// (Dejamos la simulación por ahora)
 func (pc *ProductController) SemanticSearchProducts(c *gin.Context) {
 	var requestBody struct {
 		Query string `json:"query"`
-		// En el futuro, aquí también podríamos recibir una imagen en base64.
 	}
 
 	if err := c.ShouldBindJSON(&requestBody); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Cuerpo de la petición inválido"})
 		return
 	}
-	
-	// --- SIMULACIÓN DE LA LÓGICA DE IA ---
-	// 1. (FUTURO) Tomar requestBody.Query ("algo elegante para una boda").
-	// 2. (FUTURO) Convertir el texto a un vector usando un modelo de IA (ej. CLIP).
-	// 3. (FUTURO) Ejecutar una consulta de similitud de cosenos en Supabase con pgvector.
-	// 4. (FUTURO) La base de datos devolvería los productos más relevantes.
 
-	// Por ahora, devolvemos un resultado de prueba que "parece" relevante.
-	// Simulamos que la búsqueda "elegante" devolvió el collar y los aretes.
-	searchResults := []models.Product{mockProducts[0], mockProducts[2]}
+	mockResult := []models.Product{
+		{ID: 1, Name: "Resultado Simulado 1", Price: 100},
+		{ID: 3, Name: "Resultado Simulado 2", Price: 200},
+	}
 
-	c.JSON(http.StatusOK, searchResults)
+	c.JSON(http.StatusOK, mockResult)
 }

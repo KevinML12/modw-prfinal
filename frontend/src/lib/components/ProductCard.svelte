@@ -1,61 +1,79 @@
 <script>
-  // Importamos las transiciones de Svelte para animaciones elegantes.
   import { fly } from 'svelte/transition';
+  import { brand } from '$lib/config/brand.config.js';
+  import { cart } from '$lib/stores/cart.store.js';
 
   /**
-   * Prop: 'product'.
-   * El componente espera recibir un objeto de producto con esta estructura.
-   * Usamos JSDoc para definir el tipo y tener un mejor autocompletado en el editor.
-   * @type {{id: number, name: string, price: number, image_url: string}}
+   * @type {{ id: number, name: string, price: number, image_url: string, description: string }}
    */
   export let product;
 
-  // Variable para controlar la visibilidad de los detalles en el hover.
-  let isHovering = false;
+  const fonts = brand.identity.fonts;
+  const colors = brand.identity.colors;
 
-  // Función para formatear el precio a moneda local (Quetzales).
-  // Ej: 450 -> Q450.00
-  function formatCurrency(value) {
+  const formatCurrency = (value) => {
     return new Intl.NumberFormat('es-GT', {
       style: 'currency',
       currency: 'GTQ',
     }).format(value);
+  };
+
+  function handleAddToCart() {
+    cart.addProduct(product);
+    console.log('Producto añadido:', product.name);
   }
 </script>
 
-<a 
-  href="/product/{product.id}" 
-  class="group relative block overflow-hidden rounded-md shadow-sm transition-shadow duration-300 ease-in-out hover:shadow-xl"
-  on:mouseenter={() => isHovering = true}
-  on:mouseleave={() => isHovering = false}
+<div
+  class="group flex flex-col overflow-hidden rounded-lg bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg"
+  in:fly={{ y: 20, duration: 300, delay: 50 }}
 >
-  <div class="aspect-square w-full overflow-hidden">
-    <img
-      src={product.image_url}
-      alt={product.name}
-      class="h-full w-full object-cover object-center transition-transform duration-500 ease-in-out group-hover:scale-105"
-    />
+  <div class="relative overflow-hidden">
+    <a href={`/product/${product.id}`}>
+      <img
+        src={product.image_url || '/images/placeholder.jpg'}
+        alt={product.name}
+        class="h-64 w-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
+        loading="lazy"
+      />
+    </a>
   </div>
 
-  {#if isHovering}
-    <div 
-      class="absolute bottom-0 left-0 w-full bg-background/80 p-4 text-center backdrop-blur-sm"
-      transition:fly={{ y: 20, duration: 300 }}
-    >
-      <h3 class="font-headings text-lg font-medium text-text">
+  <div class="flex flex-1 flex-col justify-between p-4">
+    <div>
+      <a
+        href={`/product/${product.id}`}
+        class="text-lg font-medium hover:underline"
+        style:font-family={fonts.headings}
+        style:color={colors.text}
+      >
         {product.name}
-      </h3>
-      <p class="mt-1 font-body text-base text-secondary">
-        {formatCurrency(product.price)}
+      </a>
+      <p class="mt-1 text-sm text-gray-500" style:font-family={fonts.body}>
+        {product.description.substring(0, 50)}...
       </p>
     </div>
-  {/if}
-</a>
 
-<style>
-  /* Importamos las fuentes definidas en brand.config.js a través de Tailwind CSS.
-    Esta configuración se hará en app.css o en el layout principal.
-    Por ahora, el componente se basa en que las clases `font-headings` y `font-body`
-    están disponibles globalmente.
-  */
-</style>
+    <div class="mt-4 flex items-center justify-between">
+      <p
+        class="text-xl font-semibold"
+        style:font-family={fonts.body}
+        style:color={colors.secondary}
+      >
+        {formatCurrency(product.price)}
+      </p>
+
+      <button
+        on:click={handleAddToCart}
+        class="rounded-md px-3 py-1.5 text-sm font-medium text-white transition-colors"
+        style:background-color={colors.primary}
+        on:mouseover={(e) => (e.target.style.backgroundColor = colors.secondary)}
+        on:mouseout={(e) => (e.target.style.backgroundColor = colors.primary)}
+        on:focus={(e) => (e.target.style.backgroundColor = colors.secondary)}
+        on:blur={(e) => (e.target.style.backgroundColor = colors.primary)}
+      >
+        Añadir
+      </button>
+    </div>
+  </div>
+</div>

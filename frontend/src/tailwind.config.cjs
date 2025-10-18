@@ -1,6 +1,5 @@
 // frontend/tailwind.config.cjs
 
-// Importamos la configuración de nuestra marca para no repetir los valores.
 const { brand } = require('./src/lib/config/brand.config.js');
 
 /** @type {import('tailwindcss').Config} */
