@@ -27,16 +27,18 @@ export {};
 
 declare module "$app/types" {
 	export interface AppTypes {
-		RouteId(): "/" | "/checkout";
+		RouteId(): "/" | "/checkout" | "/product" | "/product/[id]";
 		RouteParams(): {
-			
+			"/product/[id]": { id: string }
 		};
 		LayoutParams(): {
-			"/": Record<string, never>;
-			"/checkout": Record<string, never>
+			"/": { id?: string };
+			"/checkout": Record<string, never>;
+			"/product": { id?: string };
+			"/product/[id]": { id: string }
 		};
-		Pathname(): "/" | "/checkout" | "/checkout/";
+		Pathname(): "/" | "/checkout" | "/checkout/" | "/product" | "/product/" | `/product/${string}` & {} | `/product/${string}/` & {};
 		ResolvedPathname(): `${"" | `/${string}`}${ReturnType<AppTypes['Pathname']>}`;
-		Asset(): "/manifest.json" | string & {};
+		Asset(): "/icons/android-chrome-192x192.png" | "/icons/android-chrome-512x512.png" | "/icons/apple-touch-icon.png" | "/icons/favicon-16x16.png" | "/icons/favicon-32x32.png" | "/icons/favicon.ico" | "/manifest.json" | string & {};
 	}
 }

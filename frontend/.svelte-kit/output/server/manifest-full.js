@@ -7,10 +7,10 @@ function __memo(fn) {
 return {
 	appDir: "_app",
 	appPath: "_app",
-	assets: new Set(["manifest.json"]),
-	mimeTypes: {".json":"application/json"},
+	assets: new Set(["icons/android-chrome-192x192.png","icons/android-chrome-512x512.png","icons/apple-touch-icon.png","icons/favicon-16x16.png","icons/favicon-32x32.png","icons/favicon.ico","manifest.json","service-worker.js"]),
+	mimeTypes: {".png":"image/png",".json":"application/json"},
 	_: {
-		client: {start:"_app/immutable/entry/start.CW_yQKs0.js",app:"_app/immutable/entry/app.ZHk65X3V.js",imports:["_app/immutable/entry/start.CW_yQKs0.js","_app/immutable/chunks/B-YG-rWu.js","_app/immutable/chunks/BLzuDzTN.js","_app/immutable/chunks/DqJylSoy.js","_app/immutable/entry/app.ZHk65X3V.js","_app/immutable/chunks/BLzuDzTN.js","_app/immutable/chunks/IHki7fMi.js"],stylesheets:[],fonts:[],uses_env_dynamic_public:false},
+		client: {start:"_app/immutable/entry/start.CF5tMOLQ.js",app:"_app/immutable/entry/app.Cn5flKRv.js",imports:["_app/immutable/entry/start.CF5tMOLQ.js","_app/immutable/chunks/BtkSPeIC.js","_app/immutable/chunks/BLzuDzTN.js","_app/immutable/chunks/DqJylSoy.js","_app/immutable/entry/app.Cn5flKRv.js","_app/immutable/chunks/BLzuDzTN.js","_app/immutable/chunks/IHki7fMi.js"],stylesheets:[],fonts:[],uses_env_dynamic_public:false},
 		nodes: [
 			__memo(() => import('./nodes/0.js')),
 			__memo(() => import('./nodes/1.js')),

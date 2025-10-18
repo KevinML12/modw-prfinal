@@ -1,88 +1,119 @@
-<script context="module">
-  /**
-   * Esta es la función `load` de SvelteKit.
-   * Se ejecuta ANTES de que el componente se renderice.
-   * Es el lugar perfecto para cargar datos de una API.
-   *
-   * NOTA: `fetch` aquí es el `fetch` universal de SvelteKit,
-   * funciona tanto en el servidor como en el cliente.
-   */
-  export async function load({ fetch }) {
-    try {
-      // 1. Llamamos a nuestra API de Go (que está en el puerto 8080) 
-    const res = await fetch('http://localhost:8080/api/v1/products');
-
-      if (!res.ok) {
-        // Si la API de Go falla, lanzamos un error
-        throw new Error(`Error ${res.status}: No se pudo conectar a la API de productos`);
-      }
-
-      // 2. Obtenemos el JSON con los productos reales de Supabase
-      const products = await res.json();
-
-      // 3. Pasamos los productos como 'props' a la página
-      return {
-        props: {
-          products: products || [], // Asegurarnos de pasar un array
-        },
-      };
-    } catch (error) {
-      console.error("Error cargando productos en +page.svelte:", error);
-      // Si todo falla (ej. el backend está caído), mostramos la página con productos vacíos
-      return {
-        props: {
-          products: [],
-          error: error.message,
-        },
-      };
-    }
-  }
-</script>
-
 <script>
-  import ProductCard from '$lib/components/ProductCard.svelte';
-  import { brand } from '$lib/config/brand.config.js';
+	import ProductCard from '$lib/components/ProductCard.svelte';
+	import { brand } from '$lib/config/brand.config.js';
 
-  // Estos 'props' vienen de la función `load` de arriba
-  export let products = [];
-  export let error = null;
+	export let data;
+	$: products = data.products || [];
+	$: initialError = data.error || null;
 
-  const fonts = brand.identity.fonts;
-  const colors = brand.identity.colors;
+	// Estado para búsqueda
+	let searchQuery = '';
+	let searchResults = [];
+	let isLoading = false;
+	let searchError = null;
+	let isSearching = false;
+
+	async function performSearch() {
+		if (!searchQuery.trim()) {
+			isSearching = false;
+			searchResults = [];
+			searchError = null;
+			return;
+		}
+		isLoading = true;
+		isSearching = true;
+		searchError = null;
+		searchResults = [];
+
+		try {
+			const response = await fetch('http://localhost:8080/api/v1/products/search', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ query: searchQuery }),
+			});
+			if (!response.ok) {
+				const errorData = await response.json();
+				throw new Error(errorData.error || `Error ${response.status}`);
+			}
+			searchResults = await response.json();
+		} catch (err) {
+			console.error('Error en búsqueda semántica:', err);
+			searchError = err.message || 'Ocurrió un error al buscar.';
+		} finally {
+			isLoading = false;
+		}
+	}
+
+	// Determina qué productos mostrar
+	$: productsToShow = isSearching ? searchResults : products;
 </script>
 
 <svelte:head>
-  <title>{brand.seo.title}</title>
-  <meta name="description" content={brand.seo.description} />
+	<title>{brand.seo.title}</title>
+	<meta name="description" content={brand.seo.description} />
 </svelte:head>
 
 <section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-  <h1
-    class="mb-8 text-center text-4xl font-bold tracking-tight md:text-5xl"
-    style:font-family={fonts.headings}
-    style:color={colors.text}
-  >
-    Nuestra Colección
-  </h1>
+	<h1 class="font-headings text-text mb-8 text-center text-4xl font-bold tracking-tight md:text-5xl">
+		Nuestra Colección
+	</h1>
 
-  {#if error}
-    <div class="rounded-lg border border-red-300 bg-red-50 p-4 text-center">
-      <h3 class="font-bold text-red-800">Error al Cargar Productos</h3>
-      <p class="text-red-700">{error}</p>
-      <p class="mt-2 text-sm text-gray-600">
-        Asegúrate de que el contenedor del backend (`phoenix_backend`) esté corriendo.
-      </p>
-    </div>
-  {:else if products.length === 0}
-    <div class="text-center text-gray-500" style:font-family={fonts.body}>
-      <p class="text-xl">Aún no hay productos en la colección.</p>
-      <p>Pronto agregaremos nuevas piezas únicas.</p>
-    </div>
-  {/if}
+	<!-- Campo de búsqueda -->
+	<div class="mb-10 max-w-xl mx-auto">
+		<form on:submit|preventDefault={performSearch} class="flex gap-2">
+			<input
+				type="search"
+				bind:value={searchQuery}
+				placeholder="Buscar por descripción..."
+				class="font-body border-border text-text placeholder:text-text/50 focus:border-primary focus:ring-primary flex-grow rounded-md bg-card shadow-sm"
+			/>
+			<button
+				type="submit"
+				class="font-headings bg-primary rounded-md px-5 py-2 text-white transition-colors hover:bg-secondary focus:bg-secondary disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-background"
+				disabled={isLoading}
+			>
+				{#if isLoading} Buscando... {:else} Buscar {/if}
+			</button>
+		</form>
 
-  <div class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-    {#each products as product (product.id)}
-      <ProductCard {product} />
-    {/each}
-  </div>
+		{#if !isSearching && !searchQuery}
+			<p class="text-center text-sm text-text/60 mt-2">
+				O prueba nuestra búsqueda por descripción.
+			</p>
+		{/if}
+	</div>
+
+	<!-- Manejo de errores o estados -->
+	{#if initialError && !isSearching}
+		<div class="bg-red-100 dark:bg-red-900/30 border-red-400 text-red-700 dark:text-red-300 rounded-lg border p-4 text-center">
+			Error: {initialError}
+		</div>
+	{:else if isSearching}
+		{#if isLoading}
+			<p class="font-body text-text/70 text-center">Buscando...</p>
+		{:else if searchError}
+			<div class="bg-yellow-100 dark:bg-yellow-900/30 border-yellow-400 text-yellow-800 dark:text-yellow-300 rounded-lg border p-4 text-center">
+				Error: {searchError}
+			</div>
+		{:else if searchResults.length === 0}
+			<p class="font-body text-text/70 text-center">
+				No hay resultados para "{searchQuery}".
+			</p>
+		{:else}
+			<p class="font-body text-text/70 mb-6 text-center">
+				Resultados para "{searchQuery}":
+			</p>
+		{/if}
+	{/if}
+
+	<!-- Cuadrícula de productos -->
+	{#if !isLoading && productsToShow.length > 0}
+		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+			{#each productsToShow as product (product.id)}
+				<ProductCard {product} />
+			{/each}
+		</div>
+	{:else if !isLoading && !isSearching && products.length === 0 && !initialError}
+		<p class="font-body text-text/70 text-center text-xl">Colección vacía.</p>
+	{/if}
 </section>

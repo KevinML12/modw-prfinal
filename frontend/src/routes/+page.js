@@ -2,27 +2,39 @@
  * @type {import('./$types').PageLoad}
  */
 export async function load({ fetch }) {
-  try {
-    // Esta URL funciona para SSR dentro del entorno Docker.
-    const res = await fetch('http://localhost:8080/api/v1/products');
+	try {
+		// Usa el nombre del servicio Docker para SSR, SvelteKit lo maneja.
+		const res = await fetch('http://backend:8080/api/v1/products');
 
-    if (!response.ok) {
-      throw new Error(`Error al obtener los productos: ${response.statusText}`);
-    }
+		// Verifica si la respuesta fue exitosa (código 2xx)
+		if (!res.ok) {
+			// Intenta leer el mensaje de error del backend si existe
+			let errorMessage = `Error ${res.status}: ${res.statusText}`;
+			try {
+				const errorBody = await res.json();
+				if (errorBody && errorBody.error) {
+					errorMessage = errorBody.error;
+				}
+			} catch (e) {
+				// Ignora si el cuerpo no es JSON
+			}
+			throw new Error(`No se pudo conectar a la API de productos: ${errorMessage}`);
+		}
 
-    const products = await response.json();
+		// Convierte la respuesta a JSON
+		const products = await res.json();
 
-    // Los datos devueltos aquí estarán disponibles en +page.svelte
-    return {
-      products,
-    };
-
-  } catch (error) {
-    console.error("No se pudo conectar a la API del backend:", error);
-    // Devolvemos un array vacío para que la página no se rompa.
-    return {
-      products: [],
-      error: "No se pudieron cargar los productos. Intenta de nuevo más tarde."
-    };
-  }
+		// Devuelve los productos. Estarán disponibles como 'data.products' en +page.svelte
+		return {
+			products: products || [], // Asegura devolver siempre un array
+			error: null, // Indica que no hubo error
+		};
+	} catch (error) {
+		console.error('No se pudo conectar a la API del backend:', error);
+		// Devuelve un array vacío y el mensaje de error
+		return {
+			products: [],
+			error: error.message || 'No se pudieron cargar los productos. Intenta de nuevo más tarde.',
+		};
+	}
 }

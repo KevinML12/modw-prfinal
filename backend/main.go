@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time" // <-- 1. AÑADE ESTA LÍNEA
 
 	"github.com/gin-contrib/cors" // Para manejar CORS
 	"github.com/gin-gonic/gin"    // Framework web
@@ -25,12 +26,16 @@ func main() {
 	// Crea una instancia del router Gin
 	router := gin.Default()
 
-	// Configura CORS
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:5173", "http://localhost:4173"} // Puertos de SvelteKit dev/preview
-	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
-	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization"}
-	router.Use(cors.New(config))
+	// --- Configuración CORS Explícita ---
+	config := cors.Config{
+		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:4173"}, // Permite ambos puertos
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "Accept"}, // Añade "Accept"
+		AllowCredentials: true,                                                          // Importante si usarás autenticación basada en cookies/sesiones después
+		MaxAge:           12 * time.Hour,                                                // Tiempo que el navegador puede cachear la respuesta preflight
+	}
+	router.Use(cors.New(config)) // Aplicar ANTES de las rutas
+	// --- Fin Configuración CORS ---
 
 	// Instancia el controlador de productos
 	pc := controllers.NewProductController()
@@ -41,15 +46,12 @@ func main() {
 		// Rutas para productos
 		products := api.Group("/products")
 		{
-			products.GET("/", pc.GetProducts)                   // Obtener todos
-			products.GET("/:id", pc.GetProductByID)             // Obtener uno por ID
-			products.POST("/search", pc.SemanticSearchProducts) // Búsqueda semántica
-			products.POST("/", pc.CreateProduct)                // Crear nuevo producto
-			products.PUT("/:id", pc.UpdateProduct)              // Actualizar producto existente
-			// Faltaría: products.DELETE("/:id", pc.DeleteProduct)
+			products.GET("/", pc.GetProducts)
+			products.GET("/:id", pc.GetProductByID)
+			products.POST("/search", pc.SemanticSearchProducts)
+			products.POST("/", pc.CreateProduct)
+			products.PUT("/:id", pc.UpdateProduct)
 		}
-
-		// Aquí irían otros grupos (orders, users, etc.)
 	}
 
 	// Inicia el servidor

@@ -1,176 +1,137 @@
 <script>
-  import { brand } from '$lib/config/brand.config.js';
-  import { cart } from '$lib/stores/cart.store.js';
+	import { brand } from '$lib/config/brand.config.js';
+	import { cart } from '$lib/stores/cart.store.js';
+	import { goto } from '$app/navigation'; // Para redirigir
 
-  // Solo necesitamos las reglas de negocio, los estilos ya están en Tailwind
-  const shippingRules = brand.businessRules.shipping;
+	const shippingRules = brand.businessRules.shipping;
+	let clientMunicipality = '';
 
-  let clientMunicipality = '';
+	$: subtotal = $cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+	$: shippingCost = (() => {
+		const normalizedInput = clientMunicipality.toLowerCase().trim();
+		if (shippingRules.localZones.includes(normalizedInput)) { return shippingRules.costs.local; }
+		return shippingRules.costs.national;
+	})();
+	$: total = subtotal + shippingCost;
 
-  $: subtotal = $cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+	const formatCurrency = (value) => {
+        if (value == null) return '';
+		return new Intl.NumberFormat('es-GT', { style: 'currency', currency: 'GTQ' }).format(value);
+	};
 
-  $: shippingCost = (() => {
-    const normalizedInput = clientMunicipality.toLowerCase().trim();
-    if (shippingRules.localZones.includes(normalizedInput)) {
-      return shippingRules.costs.local;
-    }
-    return shippingRules.costs.national;
-  })();
+	let isSubmitting = false; // Estado para deshabilitar botón
 
-  $: total = subtotal + shippingCost;
+	async function handlePayment() {
+		isSubmitting = true;
+		console.log('Enviando orden...');
+		try {
+			// Recolectar datos del formulario (mejor usar bind:value en los inputs)
+			const nameInput = document.getElementById('name');
+			const addressInput = document.getElementById('address');
+			const phoneInput = document.getElementById('phone');
 
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat('es-GT', {
-      style: 'currency',
-      currency: 'GTQ',
-    }).format(value);
-  };
+			if (!nameInput || !addressInput || !phoneInput) {
+				throw new Error("Error interno del formulario.");
+			}
 
-  function handlePayment() {
-    console.log('Orden a procesar:', {
-      items: $cart,
-      shipping: {
-        municipality: clientMunicipality,
-        cost: shippingCost,
-      },
-      total: total,
-    });
-    alert('¡Procesando pago! (simulación)');
-  }
+			const shippingInfo = {
+				name: nameInput.value,
+				address: addressInput.value,
+				municipality: clientMunicipality,
+				phone: phoneInput.value
+			};
+
+			// Llamar a la API del backend (desde el navegador -> localhost)
+			const response = await fetch('http://localhost:8080/api/v1/orders', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				// Enviar items del carrito y datos de envío
+				body: JSON.stringify({ items: $cart, shippingInfo: shippingInfo }),
+			});
+
+			if (!response.ok) {
+				let errorMsg = 'Error al crear la orden.';
+				try { const errData = await response.json(); errorMsg = errData.error || errorMsg; } catch (e) {/*ignore*/}
+				throw new Error(errorMsg);
+			}
+
+			const result = await response.json();
+			console.log("Orden creada:", result);
+
+			// Éxito: Limpiar carrito y redirigir (o mostrar mensaje)
+			cart.clear();
+			alert(`¡Pedido #${result.orderId} realizado con éxito! (Simulación completa)`);
+			goto('/order-success'); // Redirige a una página de éxito (crearla si no existe)
+
+		} catch (error) {
+			console.error('Error al enviar orden:', error);
+			alert(`Error al procesar el pedido: ${error.message}`);
+		} finally {
+			isSubmitting = false;
+		}
+	}
 </script>
 
-<svelte:head>
-  <title>Finalizar Compra | {brand.identity.name}</title>
-</svelte:head>
+<svelte:head> <title>Finalizar Compra | {brand.identity.name}</title> </svelte:head>
 
 <div class="bg-background flex min-h-screen justify-center p-4 md:p-8">
-  <div class="w-full max-w-4xl">
-    <h1 class="font-headings text-text mb-8 text-center text-4xl">
-      Finalizar Compra
-    </h1>
+	<div class="w-full max-w-4xl">
+		<h1 class="font-headings text-text mb-8 text-center text-4xl">Finalizar Compra</h1>
 
-    {#if $cart.length === 0}
-      <div
-        class="font-body rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm"
-      >
-        <p class="text-xl text-gray-700">Tu carrito está vacío.</p>
-        <a
-          href="/"
-          class="bg-primary mt-4 inline-block rounded-md px-6 py-2 text-white hover:bg-secondary focus:bg-secondary"
-        >
-          Volver a la tienda
-        </a>
-      </div>
-    {:else}
-      <div class="font-body grid grid-cols-1 gap-8 md:grid-cols-2">
-        <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 class="font-headings mb-4 text-2xl">Resumen de tu Orden</h2>
-
-          <div class="mb-4 space-y-3 border-b pb-4">
-            {#each $cart as item (item.id)}
-              <div class="flex justify-between">
-                <span>
-                  {item.name} (x{item.quantity})
-                </span>
-                <span class="font-medium">
-                  {formatCurrency(item.price * item.quantity)}
-                </span>
-              </div>
-            {/each}
-          </div>
-
-          <div class="space-y-2">
-            <div class="flex justify-between">
-              <span>Subtotal:</span>
-              <span>{formatCurrency(subtotal)}</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Envío ({shippingRules.nationalProvider}):</span>
-              <span>{formatCurrency(shippingCost)}</span>
-            </div>
-            <div
-              class="font-headings text-text flex justify-between border-t pt-2 text-xl font-bold"
-            >
-              <span>Total:</span>
-              <span>{formatCurrency(total)}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 class="font-headings mb-4 text-2xl">Información de Envío</h2>
-
-          <form on:submit|preventDefault={handlePayment} class="space-y-4">
-            <div>
-              <label for="name" class="mb-1 block text-sm font-medium"
-                >Nombre Completo</label
-              >
-              <input
-                type="text"
-                id="name"
-                class="w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                required
-              />
-            </div>
-            <div>
-              <label for="address" class="mb-1 block text-sm font-medium"
-                >Dirección Completa</label
-              >
-              <input
-                type="text"
-                id="address"
-                class="w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                required
-              />
-            </div>
-            <div>
-              <label for="municipality" class="mb-1 block text-sm font-medium"
-                >Municipio</label
-              >
-              <input
-                type="text"
-                id="municipality"
-                class="w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                placeholder="Ej: Huehuetenango"
-                bind:value={clientMunicipality}
-                required
-              />
-              <p class="mt-1 text-xs text-gray-500">
-                Costo local ({formatCurrency(shippingRules.costs.local)}) aplica
-                para:
-                {shippingRules.localZones.join(', ')}.
-              </p>
-            </div>
-            <div>
-              <label for="phone" class="mb-1 block text-sm font-medium"
-                >Teléfono</label
-              >
-              <input
-                type="tel"
-                id="phone"
-                class="w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                required
-              />
-            </div>
-            <div
-              class="rounded border border-dashed border-gray-400 bg-gray-50 p-4 text-center"
-            >
-              <span class="text-gray-600">
-                (Aquí iría el Componente de Pago Seguro)
-              </span>
-            </div>
-            <button
-              type="submit"
-              class="font-headings bg-primary w-full rounded-md px-4 py-3 text-lg font-semibold text-white transition-colors duration-300 hover:bg-secondary focus:bg-secondary"
-            >
-              Pagar {formatCurrency(total)}
-            </button>
-          </form>
-        </div>
-      </div>
-    {/if}
-  </div>
+		{#if $cart.length === 0}
+			<div class="font-body bg-card border-border rounded-lg border p-8 text-center shadow-sm">
+				<p class="text-xl text-text/80">Tu carrito está vacío.</p>
+				<a href="/" class="bg-primary mt-4 inline-block rounded-md px-6 py-2 text-white hover:bg-secondary focus:bg-secondary"> Volver </a>
+			</div>
+		{:else}
+			<div class="font-body grid grid-cols-1 gap-8 md:grid-cols-2">
+				
+				<div class="bg-card border-border rounded-lg border p-6 shadow-sm">
+					<h2 class="font-headings text-text mb-4 text-2xl">Resumen</h2>
+					<div class="mb-4 space-y-3 border-b border-border pb-4">
+						{#each $cart as item (item.id)}
+							<div class="flex justify-between text-sm">
+								<span class="text-text/90">{item.name} (x{item.quantity})</span>
+								<span class="font-medium text-text">{formatCurrency(item.price * item.quantity)}</span>
+							</div>
+						{/each}
+					</div>
+					<div class="space-y-2 text-sm">
+						<div class="flex justify-between text-text/90"><span>Subtotal:</span><span>{formatCurrency(subtotal)}</span></div>
+						<div class="flex justify-between text-text/90"><span>Envío:</span><span>{formatCurrency(shippingCost)}</span></div>
+						<div class="font-headings text-text flex justify-between border-t border-border pt-2 text-lg font-bold"><span>Total:</span><span>{formatCurrency(total)}</span></div>
+					</div>
+				</div>
+        
+				<div class="bg-card border-border rounded-lg border p-6 shadow-sm">
+					<h2 class="font-headings text-text mb-4 text-2xl">Envío y Pago</h2>
+					<form on:submit|preventDefault={handlePayment} class="space-y-4">
+						<div>
+							<label for="name" class="mb-1 block text-sm font-medium text-text/80">Nombre</label>
+							<input type="text" id="name" required class="border-border text-text placeholder:text-text/50 focus:border-primary focus:ring-primary block w-full rounded-md bg-white dark:bg-gray-800 shadow-sm sm:text-sm"/>
+						</div>
+						<div>
+							<label for="address" class="mb-1 block text-sm font-medium text-text/80">Dirección</label>
+							<input type="text" id="address" required class="border-border text-text placeholder:text-text/50 focus:border-primary focus:ring-primary block w-full rounded-md bg-white dark:bg-gray-800 shadow-sm sm:text-sm"/>
+						</div>
+						<div>
+							<label for="municipality" class="mb-1 block text-sm font-medium text-text/80">Municipio</label>
+							<input type="text" id="municipality" bind:value={clientMunicipality} required placeholder="Ej: Huehuetenango" class="border-border text-text placeholder:text-text/50 focus:border-primary focus:ring-primary block w-full rounded-md bg-white dark:bg-gray-800 shadow-sm sm:text-sm"/>
+							<p class="mt-1 text-xs text-text/60">Costo local ({formatCurrency(shippingRules.costs.local)}) aplica para: {shippingRules.localZones.join(', ')}.</p>
+						</div>
+						<div>
+							<label for="phone" class="mb-1 block text-sm font-medium text-text/80">Teléfono</label>
+							<input type="tel" id="phone" required class="border-border text-text placeholder:text-text/50 focus:border-primary focus:ring-primary block w-full rounded-md bg-white dark:bg-gray-800 shadow-sm sm:text-sm"/>
+						</div>
+						<div class="border-border bg-background rounded border border-dashed p-4 text-center">
+							<span class="text-text/60 text-sm">(Componente de Pago Seguro - Simulado)</span>
+						</div>
+						<button type="submit" disabled={isSubmitting} class="font-headings bg-primary w-full rounded-md px-4 py-3 text-lg font-semibold text-white transition-colors duration-300 hover:bg-secondary focus:bg-secondary disabled:opacity-50 disabled:cursor-not-allowed">
+                          {#if isSubmitting} Procesando... {:else} Pagar {formatCurrency(total)} {/if}
+                        </button>
+					</form>
+				</div>
+			</div>
+		{/if}
+	</div>
 </div>

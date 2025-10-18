@@ -107,10 +107,10 @@ const options = {
   // added lazily, via `get_hooks`
   preload_strategy: "modulepreload",
   root: Root,
-  service_worker: false,
+  service_worker: true,
   service_worker_options: void 0,
   templates: {
-    app: ({ head, body, assets, nonce, env }) => '<!DOCTYPE html>\r\n<html lang="en">\r\n	<head>\r\n		<meta charset="utf-8" />\r\n		<link rel="icon" href="' + assets + '/favicon.png" />\r\n		<meta name="viewport" content="width=device-width" />\r\n\r\n    <link rel="manifest" href="/manifest.json" />\r\n    <meta name="theme-color" content="#E1AEC1" /> ' + head + '\r\n	</head>\r\n	<body data-sveltekit-preload-data="hover">\r\n		<div style="display: contents">' + body + "</div>\r\n	</body>\r\n</html>",
+    app: ({ head, body, assets, nonce, env }) => '<!DOCTYPE html>\r\n<html lang="en">\r\n	<head>\r\n		<meta charset="utf-8" />\r\n		<link rel="icon" href="/icons/favicon.ico" sizes="any" />\r\n		<link rel="icon" href="/icons/favicon-16x16.png" type="image/png" sizes="16x16" />\r\n		<link rel="icon" href="/icons/favicon-32x32.png" type="image/png" sizes="32x32" />\r\n		<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />\r\n		<meta name="viewport" content="width=device-width" />\r\n		<link rel="manifest" href="/manifest.json" />\r\n		<meta name="theme-color" content="#E1AEC1" />\r\n		' + head + '\r\n	</head>\r\n	<body data-sveltekit-preload-data="hover">\r\n		<div style="display: contents">' + body + "</div>\r\n	</body>\r\n</html>",
     error: ({ status, message }) => '<!doctype html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<title>' + message + `</title>
 
 		<style>
@@ -182,7 +182,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "r2rdem"
+  version_hash: "ohnnp2"
 };
 async function get_hooks() {
   let handle;

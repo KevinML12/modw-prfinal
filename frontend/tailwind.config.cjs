@@ -1,26 +1,22 @@
-// Archivo: frontend/tailwind.config.cjs
-// (Ubicado en la raíz de /frontend)
-
-// 1. Importamos nuestra configuración de marca
-// La ruta es relativa a ESTE archivo
+// frontend/tailwind.config.cjs
 const { brand } = require('./src/lib/config/brand.config.js');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  // 2. Esta es la línea que fallaba al ser leída por Tailwind
+  darkMode: 'class', // Habilitar dark mode basado en clase '.dark' en <html>
   content: ['./src/**/*.{html,js,svelte,ts}'],
-
   theme: {
     extend: {
-      // 3. Extendemos los colores de Tailwind con los nuestros
+      // Definimos colores usando variables CSS para permitir cambio dinámico
       colors: {
-        primary: brand.identity.colors.primary,
-        secondary: brand.identity.colors.secondary,
-        background: brand.identity.colors.background,
-        text: brand.identity.colors.text,
-        accent: brand.identity.colors.accent,
+        primary: 'rgb(var(--color-primary) / <alpha-value>)',
+        secondary: 'rgb(var(--color-secondary) / <alpha-value>)',
+        background: 'rgb(var(--color-background) / <alpha-value>)',
+        text: 'rgb(var(--color-text) / <alpha-value>)',
+        accent: 'rgb(var(--color-accent) / <alpha-value>)',
+        card: 'rgb(var(--color-card) / <alpha-value>)',     // Color para fondos de tarjetas
+        border: 'rgb(var(--color-border) / <alpha-value>)', // Color para bordes
       },
-      // 4. Extendemos las fuentes de Tailwind con las nuestras
       fontFamily: {
         headings: [brand.identity.fonts.headings, 'serif'],
         body: [brand.identity.fonts.body, 'sans-serif'],
@@ -28,6 +24,6 @@ module.exports = {
     },
   },
   plugins: [
-    require('@tailwindcss/forms'), // Plugin útil para estilizar formularios
+    require('@tailwindcss/forms'),
   ],
 };
