@@ -7,8 +7,8 @@
 	export let required = false;
 </script>
 
-<div classclass="w-full">
-	<label for={id} class="block mb-2 text-sm font-medium text-text">
+<div class="w-full">
+	<label for={id} class="block mb-2 text-sm font-medium text-neon-pink">
 		{label}
 	</label>
 	<input
@@ -17,6 +17,6 @@
 		bind:value
 		{placeholder}
 		{required}
-		class="w-full p-3 border rounded-lg bg-secondary border-gray-700 text-text placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+		class="w-full px-4 py-2 border rounded-2xl bg-black border-neon-pink/40 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-neon-pink focus:border-neon-pink transition-all duration-300"
 	/>
 </div>

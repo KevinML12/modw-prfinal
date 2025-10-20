@@ -47,41 +47,42 @@
 	<title>Nuestra Colección - Moda Orgánica</title>
 </svelte:head>
 
-<section class="text-center my-12 md:my-16">
-	<h1 class="text-4xl md:text-5xl font-bold font-headings">
+<section class="text-center my-12 md:my-16 px-4">
+	<h1 class="text-5xl md:text-6xl font-bold font-headings text-neon-pink mb-4">
 		Nuestra Colección
 	</h1>
+	<p class="text-white/60 text-lg">Diseño orgánico con estilo neón</p>
 </section>
 
-<section class="max-w-2xl mx-auto mb-12">
+<section class="max-w-2xl mx-auto mb-12 px-4">
 	<form
 		on:submit|preventDefault={performSearch}
-		class="flex items-center gap-2"
+		class="flex items-center gap-3"
 	>
 		<input
 			type="text"
 			bind:value={searchQuery}
 			placeholder="Buscar por descripción (ej: 'anillo de plata')..."
-			class="flex-grow p-3 rounded-lg bg-secondary border border-gray-700 text-text placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary"
+			class="flex-grow px-6 py-3 rounded-2xl bg-dark-gray border border-neon-pink/30 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-neon-pink focus:border-neon-pink transition-all duration-300"
 		/>
 		<button
 			type="submit"
-			class="p-3 rounded-lg bg-primary text-primary-content transition-transform active:scale-95 hover:brightness-90"
+			class="p-3 rounded-2xl bg-neon-yellow text-black transition-all duration-300 hover:shadow-neon-yellow hover:scale-110 active:scale-95"
 		>
 			<SearchIcon class="w-6 h-6" />
 		</button>
 	</form>
-	<div class="h-4 mt-2 text-center text-sm">
+	<div class="h-4 mt-3 text-center text-sm">
 		{#if isLoading}
-			<p class="opacity-70">Buscando...</p>
+			<p class="text-white/60">Buscando...</p>
 		{/if}
 		{#if searchError}
-			<p class="text-red-400">{searchError}</p>
+			<p class="text-neon-coral">{searchError}</p>
 		{/if}
 	</div>
 </section>
 
-<section class="max-w-7xl mx-auto">
+<section class="max-w-7xl mx-auto px-4 pb-12">
 	{#if products.length > 0}
 		<div
 			class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
@@ -91,8 +92,8 @@
 			{/each}
 		</div>
 	{:else}
-		<div classs="text-center py-16">
-			<p class="text-xl opacity-70">No hay productos para mostrar.</p>
+		<div class="text-center py-16">
+			<p class="text-xl text-white/60">No hay productos para mostrar.</p>
 		</div>
 	{/if}
 </section>

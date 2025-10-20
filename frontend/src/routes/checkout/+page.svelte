@@ -77,12 +77,11 @@
 	<title>Checkout - {brand.identity.name}</title>
 </svelte:head>
 
-<div class="max-w-7xl mx-auto">
-	<h1 class="text-3xl font-headings font-bold mb-8 text-text">Checkout</h1>
+<div class="max-w-7xl mx-auto px-4 py-8">
+	<h1 class="text-4xl font-headings font-bold mb-8 text-neon-pink">Checkout</h1>
 
 	<div
 		class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16"
-		style:color={brand.identity.colors.text}
 	>
 		<div class="lg:order-last">
 			<form
@@ -90,10 +89,10 @@
 				class="flex flex-col gap-6"
 			>
 				<section>
-					<h2 class="text-xl font-headings font-semibold mb-4">
+					<h2 class="text-xl font-headings font-semibold mb-4 text-neon-yellow">
 						Tu Información
 					</h2>
-					<div class="flex flex-col gap-4 p-6 rounded-lg bg-secondary">
+					<div class="flex flex-col gap-4 p-8 rounded-3xl bg-dark-gray border border-neon-pink/30">
 						<TextInput
 							label="Email"
 							id="email"
@@ -128,9 +127,9 @@
 				</section>
 
 				<section>
-					<h2 class="text-xl font-headings font-semibold mb-4">Pago</h2>
-					<div class="p-6 rounded-lg bg-secondary">
-						<p class="opacity-70">
+					<h2 class="text-xl font-headings font-semibold mb-4 text-neon-yellow">Pago</h2>
+					<div class="p-8 rounded-3xl bg-dark-gray border border-neon-pink/30">
+						<p class="text-white/60">
 							La integración con Stripe (tarjeta de crédito) se añadirá en
 							el siguiente paso.
 						</p>
@@ -138,13 +137,11 @@
 				</section>
 
 				<div
-					class="mt-4 p-4 lg:p-0 bg-secondary lg:bg-transparent"
+					class="mt-4 p-6 lg:p-0 bg-dark-gray lg:bg-transparent rounded-3xl lg:rounded-none border border-neon-pink/30 lg:border-none"
 				>
 					<button
 						type="submit"
-						class="w-full p-4 rounded-lg text-lg font-bold transition-transform active:scale-95"
-						style:background-color={brand.identity.colors.primary}
-						style:color={brand.identity.colors.primary_content}
+						class="w-full p-4 rounded-2xl text-lg font-bold transition-all duration-300 bg-neon-pink text-black hover:shadow-neon-pink hover:scale-105 active:scale-95"
 					>
 						Pagar {currency(total)}
 					</button>
@@ -153,41 +150,41 @@
 		</div>
 
 		<div class="lg:order-first">
-			<h2 class="text-xl font-headings font-semibold mb-4">
+			<h2 class="text-xl font-headings font-semibold mb-4 text-neon-yellow">
 				Resumen de tu Orden
 			</h2>
 
-			<div class="p-6 rounded-lg bg-secondary">
+			<div class="p-8 rounded-3xl bg-dark-gray border border-neon-pink/30">
 				<div class="flex flex-col gap-5 mb-6">
 					{#if currentCart.items.length > 0}
 						{#each currentCart.items as item (item.id)}
 							<CheckoutItem {item} />
 						{/each}
 					{:else}
-						<p class="opacity-70">Tu carrito está vacío.</p>
+						<p class="text-white/60">Tu carrito está vacío.</p>
 						<a
 							href="/"
-							class="text-primary font-medium hover:underline"
-							style:color={brand.identity.colors.primary}>Volver a la tienda</a
+							class="text-neon-pink font-medium hover:text-neon-yellow transition-colors"
+						>Volver a la tienda</a
 						>
 					{/if}
 				</div>
 
-				<hr class="border-gray-700 my-6" />
+				<hr class="border-neon-pink/20 my-6" />
 
 				<div class="flex flex-col gap-3">
-					<div class="flex justify-between">
-						<span class="opacity-70">Subtotal</span>
+					<div class="flex justify-between text-white/70">
+						<span>Subtotal</span>
 						<span class="font-medium">{currency(currentCart.subtotal)}</span>
 					</div>
-					<div class="flex justify-between">
-						<span class="opacity-70">Envío</span>
+					<div class="flex justify-between text-white/70">
+						<span>Envío</span>
 						<span class="font-medium">{currency(shippingCost)}</span>
 					</div>
 
-					<hr class="border-gray-700 my-4" />
+					<hr class="border-neon-pink/20 my-4" />
 
-					<div class="flex justify-between text-xl font-bold font-headings">
+					<div class="flex justify-between text-xl font-bold font-headings text-neon-yellow">
 						<span>Total</span>
 						<span>{currency(total)}</span>
 					</div>
