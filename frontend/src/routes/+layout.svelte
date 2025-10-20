@@ -1,7 +1,5 @@
 <script>
-  // ... (script sin cambios, importa todo lo necesario) ...
   import '../app.css';
-  import { brand } from '$lib/config/brand.config.js';
   import { cart } from '$lib/stores/cart.store.js';
   import { theme } from '$lib/stores/theme.store.js';
   import ThemeToggle from '$lib/components/ThemeToggle.svelte';
@@ -33,9 +31,6 @@
     }
     return `${r} ${g} ${b}`;
   }
-
-  const lightColors = brand.identity.colors.light;
-  const darkColors = brand.identity.colors.dark;
 </script>
 
 <svelte:head>
@@ -50,27 +45,17 @@
   <link rel="icon" href="/icons/favicon-32x32.png" type="image/png" sizes="32x32" />
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
   <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content={lightColors.primary} media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content={darkColors.background} media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#FF1493" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0A0A0A" media="(prefers-color-scheme: dark)">
   <style>
     :root {
-      --color-primary: {hexToRgb(lightColors.primary)};
-      --color-secondary: {hexToRgb(lightColors.secondary)};
-      --color-background: {hexToRgb(lightColors.background)};
-      --color-text: {hexToRgb(lightColors.text)};
-      --color-accent: {hexToRgb(lightColors.accent)};
-      --color-card: {hexToRgb(lightColors.card)};
-      --color-border: {hexToRgb(lightColors.border)};
-    }
-    html.dark {
-      --color-primary: {hexToRgb(darkColors.primary)};
-      --color-secondary: {hexToRgb(darkColors.secondary)};
-      --color-background: {hexToRgb(darkColors.background)};
-      --color-text: {hexToRgb(darkColors.text)};
-      --color-accent: {hexToRgb(darkColors.accent)};
-      --color-card: {hexToRgb(darkColors.card)};
-      --color-border: {hexToRgb(darkColors.border)};
-      color-scheme: dark;
+      --color-primary: 255 20 147;
+      --color-secondary: 26 26 26;
+      --color-background: 10 10 10;
+      --color-text: 255 255 255;
+      --color-accent: 255 255 0;
+      --color-card: 26 26 26;
+      --color-border: 255 20 147;
     }
     body {
       color: rgb(var(--color-text));
@@ -80,26 +65,26 @@
   </style>
 </svelte:head>
 
-<div class="font-body text-text bg-background flex min-h-screen flex-col transition-colors duration-300">
+<div class="font-body text-white bg-black flex min-h-screen flex-col transition-colors duration-300">
 
-  <header class="bg-background/80 dark:bg-background/90 sticky top-0 z-50 w-full border-b border-primary/20 dark:border-primary/30 backdrop-blur-sm transition-colors duration-300">
-    <nav class="mx-auto flex max-w-7xl items-center justify-between p-4">
+  <header class="bg-black/80 sticky top-0 z-50 w-full border-b border-neon-pink/30 backdrop-blur-sm transition-colors duration-300">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 md:px-6 py-5">
       <a
         href="/"
-        class="font-headings text-text text-2xl font-bold transition-opacity hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-sm"
+        class="font-headings text-neon-pink text-2xl font-bold transition-all duration-300 hover:text-neon-yellow hover:shadow-neon-pink focus:outline-none focus:ring-2 focus:ring-neon-pink focus:ring-offset-2 focus:ring-offset-black rounded-lg px-2"
       >
-        {brand.identity.name}
+        Moda Orgánica
       </a>
-      <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-6">
         <a
           href="/"
-          class="text-text hidden text-sm font-medium transition-colors hover:text-primary focus:text-primary focus:outline-none sm:block"
+          class="text-white hidden text-sm font-medium transition-all duration-300 hover:text-neon-pink focus:text-neon-yellow focus:outline-none sm:block"
         >
           Tienda
         </a>
         <a
           href="/checkout"
-          class="text-text relative flex items-center rounded-full p-1.5 transition-colors hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          class="text-white relative flex items-center rounded-full p-2 transition-all duration-300 hover:bg-neon-pink/20 hover:text-neon-pink focus:outline-none focus:ring-2 focus:ring-neon-pink"
           aria-label="Ver carrito"
         >
           <svg
@@ -118,7 +103,7 @@
           </svg>
           {#if itemCount > 0}
             <span
-              class="bg-accent absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold text-white"
+              class="bg-neon-yellow text-black absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold transition-all duration-300 hover:scale-110"
             >
               {itemCount}
             </span>
@@ -133,12 +118,12 @@
     <slot />
   </main>
 
-  <footer class="bg-card mt-16 w-full border-t border-border py-8 transition-colors duration-300">
-    <div class="text-text/70 mx-auto max-w-7xl px-4 text-center">
+  <footer class="bg-dark-gray mt-16 w-full border-t border-neon-pink/30 py-8 transition-colors duration-300">
+    <div class="text-white/60 mx-auto max-w-7xl px-4 text-center">
       <p class="font-body text-sm">
-        © {new Date().getFullYear()} {brand.identity.name}. Todos los derechos reservados.
+        © {new Date().getFullYear()} Moda Orgánica. Todos los derechos reservados.
       </p>
-      <p class="mt-2 text-xs">
+      <p class="mt-2 text-xs text-neon-pink/60">
         Proyecto Fénix - Moda Orgánica
       </p>
     </div>
