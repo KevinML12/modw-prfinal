@@ -40,6 +40,23 @@ func main() {
 	// Instancia el controlador de productos
 	pc := controllers.NewProductController()
 
+	// --- Inicializar Orders (Opcional - requiere GORM configurado) ---
+	// NOTA: Los handlers de órdenes están disponibles pero requieren que se configure
+	// una conexión GORM con la base de datos. Por ahora están comentados.
+	// Para habilitarlos:
+	// 1. Configurar GORM en db/supabase.go con GetGormDB()
+	// 2. Descomentar el siguiente bloque
+	/*
+		gormDB := db.GetGormDB()
+		if gormDB != nil {
+			orderRepo := repositories.NewOrderRepository(gormDB)
+			orderService := services.NewOrderService(orderRepo, gormDB)
+			handlers.RegisterOrderRoutes(router, orderService)
+			log.Println("✓ Rutas de órdenes registradas exitosamente")
+		}
+	*/
+	// --- Fin Órdenes ---
+
 	// Define las rutas de la API v1
 	api := router.Group("/api/v1")
 	{
