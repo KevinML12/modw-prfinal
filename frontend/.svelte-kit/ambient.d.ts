@@ -40,6 +40,7 @@ declare module '$env/static/private' {
 	export const npm_config_node_gyp: string;
 	export const PATH: string;
 	export const npm_package_name: string;
+	export const npm_config_store_dir: string;
 	export const NODE: string;
 	export const npm_config_frozen_lockfile: string;
 	export const npm_lifecycle_script: string;
@@ -97,6 +98,7 @@ declare module '$env/dynamic/private' {
 		npm_config_node_gyp: string;
 		PATH: string;
 		npm_package_name: string;
+		npm_config_store_dir: string;
 		NODE: string;
 		npm_config_frozen_lockfile: string;
 		npm_lifecycle_script: string;

@@ -2,35 +2,84 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 
-// Función auxiliar para obtener preferencia del sistema
-function getSystemPreference() {
-  if (!browser) return 'light'; // Default en SSR
+// ===== SISTEMA DE TEMA DARK MODE PREMIUM =====
+
+/**
+ * @typedef {'light' | 'dark'} Theme
+ */
+
+/**
+ * Detecta la preferencia de tema del sistema
+ * @returns {Theme}
+ */
+function getSystemTheme() {
+  if (!browser) return 'light';
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
-// Lee preferencia guardada, o del sistema, o usa 'light'
-const initialValue = browser
-  ? localStorage.getItem('theme') || getSystemPreference()
-  : 'light';
+/**
+ * Obtiene el tema inicial (localStorage > sistema > light)
+ * @returns {Theme}
+ */
+function getInitialTheme() {
+  if (!browser) return 'light';
+  const saved = localStorage.getItem('theme');
+  if (saved === 'light' || saved === 'dark') {
+    return saved;
+  }
+  return getSystemTheme();
+}
 
-// Crea el store reactivo
-const theme = writable(initialValue);
+/**
+ * Aplicar tema al DOM
+ * @param {Theme} theme
+ */
+function applyTheme(theme) {
+  if (!browser) return;
+  
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+  
+  localStorage.setItem('theme', theme);
+}
 
-// Suscripción para actualizar localStorage y clase <html> en el navegador
+// Inicializar tema
+const initialTheme = getInitialTheme();
 if (browser) {
-  theme.subscribe((value) => {
-    localStorage.setItem('theme', value);
-    if (value === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+  applyTheme(initialTheme);
+}
+
+// Crear store
+export const theme = writable(initialTheme);
+
+/**
+ * Toggle entre light y dark mode
+ */
+export function toggleTheme() {
+  theme.update((current) => {
+    const newTheme = current === 'light' ? 'dark' : 'light';
+    applyTheme(newTheme);
+    return newTheme;
   });
 }
 
-// Función para cambiar el tema
-function toggleTheme() {
-  theme.update((current) => (current === 'light' ? 'dark' : 'light'));
+/**
+ * Forzar un tema específico
+ * @param {Theme} newTheme
+ */
+export function setTheme(newTheme) {
+  applyTheme(newTheme);
+  theme.set(newTheme);
 }
 
-export { theme, toggleTheme };
+/**
+ * Obtener el tema actual (sincrónico)
+ * @returns {Theme}
+ */
+export function getCurrentTheme() {
+  if (!browser) return 'light';
+  return localStorage.getItem('theme') === 'dark' ? 'dark' : 'light';
+}

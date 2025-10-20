@@ -1,0 +1,9 @@
+{
+	"/": [
+		"src/routes/+page.js"
+	],
+	"/checkout": [],
+	"/product/[id]": [
+		"src/routes/product/[id]/+page.js"
+	]
+}

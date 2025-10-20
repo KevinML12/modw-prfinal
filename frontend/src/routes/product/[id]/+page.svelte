@@ -9,7 +9,7 @@
 
 	const formatCurrency = (value) => {
         if (value == null) return '';
-		return new Intl.NumberFormat('es-GT', { style: 'currency', currency: 'GTQ' }).format(value);
+		return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(value);
 	};
 
 	function handleAddToCart() {
@@ -25,39 +25,146 @@
 	{#if product} <meta name="description" content={product.description?.substring(0, 150)} /> {/if}
 </svelte:head>
 
-<section class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
-	{#if error}
-		<div class="bg-red-100 dark:bg-red-900/30 border-red-400 text-red-700 dark:text-red-300 rounded-lg border p-6 text-center">
-			<h2 class="font-headings text-2xl font-bold">Error</h2>
-			<p class="font-body mt-2">{error}</p>
-			<a href="/" class="bg-primary mt-6 inline-block rounded-md px-6 py-2 text-white hover:bg-secondary focus:bg-secondary"> Volver </a>
-		</div>
-	{:else if product}
-		<div class="grid grid-cols-1 items-start gap-8 md:grid-cols-2 md:gap-12" in:fly={{ y: 20, duration: 300 }}>
-			
-			<div class="aspect-square overflow-hidden rounded-lg border border-border shadow-sm">
-				<img src={product.image_url || '/images/placeholder.jpg'} alt={product.name} class="h-full w-full object-cover"/>
+<div class="min-h-screen bg-bg-primary">
+	<!-- Breadcrumb -->
+	<div class="border-b border-gray-200 bg-bg-secondary">
+		<div class="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-4">
+			<div class="flex items-center gap-2 text-sm">
+				<a href="/" class="text-primary-magenta hover:text-primary-purple transition-colors font-medium">
+					Tienda
+				</a>
+				<span class="text-text-secondary">/</span>
+				<span class="text-text-secondary">{product?.name || 'Producto'}</span>
 			</div>
-			
-			<div class="flex flex-col">
-				<h1 class="font-headings text-text mb-3 text-3xl font-bold md:text-4xl">{product.name}</h1>
-				<p class="font-body text-secondary mb-5 text-2xl font-semibold">{formatCurrency(product.price)}</p>
-				<div class="font-body text-text/80 prose prose-sm dark:prose-invert mb-6 max-w-none">
-					<p>{product.description}</p>
+		</div>
+	</div>
+
+	<!-- Main Content -->
+	<section class="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-12">
+		{#if error}
+			<div class="bg-red-50 border-l-4 border-red-400 p-8 rounded-lg">
+				<h2 class="text-2xl font-bold text-red-700 mb-2">Error</h2>
+				<p class="text-red-600 mb-6">{error}</p>
+				<a href="/" class="inline-block bg-primary-magenta text-white font-semibold py-3 px-6 rounded-lg hover:shadow-magenta transition-all duration-300">
+					Volver a la Tienda
+				</a>
+			</div>
+		{:else if product}
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start" in:fly={{ y: 20, duration: 300 }}>
+				
+				<!-- Imagen -->
+				<div class="rounded-2xl overflow-hidden border-2 border-gray-200 shadow-soft">
+					<img 
+						src={product.image_url || '/images/placeholder.jpg'} 
+						alt={product.name} 
+						class="w-full h-auto object-cover hover:scale-105 transition-transform duration-300"
+					/>
 				</div>
-				<p class="font-body mb-6 text-sm text-text/60">
-					{#if product.stock > 0} Disponible: {product.stock} u. {:else} Agotado {/if}
-				</p>
-				<button
-					on:click={handleAddToCart}
-					class="font-headings bg-primary w-full rounded-md px-6 py-3 text-lg font-semibold text-white transition-colors hover:bg-secondary focus:bg-secondary disabled:cursor-not-allowed disabled:opacity-50"
-					disabled={product.stock === 0}
-				>
-					{#if product.stock === 0} Agotado {:else} Añadir al Carrito {/if}
-				</button>
+				
+				<!-- Información del Producto -->
+				<div class="flex flex-col gap-6">
+					<!-- Título -->
+					<div>
+						<h1 class="text-4xl md:text-5xl font-black text-text-primary mb-3">
+							{product.name}
+						</h1>
+						<p class="text-text-secondary text-base">
+							Producto artesanal único • Disponible en stock
+						</p>
+					</div>
+
+					<!-- Precio -->
+					<div class="pb-6 border-b-2 border-gray-200">
+						<p class="text-sm text-text-secondary mb-2">Precio</p>
+						<p class="text-4xl font-black text-primary-magenta">
+							{formatCurrency(product.price)}
+						</p>
+					</div>
+
+					<!-- Descripción -->
+					<div>
+						<p class="text-lg text-text-primary leading-relaxed mb-4">
+							{product.description}
+						</p>
+						{#if product.stock > 0}
+							<div class="flex items-center gap-2 text-sm font-semibold text-green-600 bg-green-50 w-fit px-4 py-2 rounded-lg">
+								<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+									<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+								</svg>
+								En stock: {product.stock} unidades
+							</div>
+						{:else}
+							<div class="flex items-center gap-2 text-sm font-semibold text-red-600 bg-red-50 w-fit px-4 py-2 rounded-lg">
+								<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+									<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+								</svg>
+								Agotado
+							</div>
+						{/if}
+					</div>
+
+					<!-- Botón de Compra -->
+					<button
+						on:click={handleAddToCart}
+						disabled={product.stock === 0}
+						class="
+							w-full
+							bg-gradient-magenta
+							hover:shadow-magenta
+							disabled:opacity-50
+							disabled:cursor-not-allowed
+							text-white
+							font-bold
+							text-lg
+							py-4 px-6
+							rounded-2xl
+							transition-all duration-300
+							hover:scale-[1.02]
+							active:scale-95
+							flex items-center justify-center gap-2
+						"
+					>
+						<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+							<path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+						</svg>
+						{#if product.stock === 0}
+							Agotado
+						{:else}
+							Agregar al Carrito
+						{/if}
+					</button>
+
+					<!-- Info Adicional -->
+					<div class="bg-bg-card rounded-xl p-6 border-2 border-gray-200">
+						<h3 class="font-bold text-text-primary mb-4">Detalles del Producto</h3>
+						<ul class="space-y-3 text-sm text-text-secondary">
+							<li class="flex items-start gap-3">
+								<span class="text-primary-magenta font-bold">✓</span>
+								<span>Hecho con materiales nobles y sostenibles</span>
+							</li>
+							<li class="flex items-start gap-3">
+								<span class="text-primary-magenta font-bold">✓</span>
+								<span>Empaque premium incluido</span>
+							</li>
+							<li class="flex items-start gap-3">
+								<span class="text-primary-magenta font-bold">✓</span>
+								<span>Envío seguro a toda Guatemala</span>
+							</li>
+							<li class="flex items-start gap-3">
+								<span class="text-primary-magenta font-bold">✓</span>
+								<span>Garantía de satisfacción</span>
+							</li>
+						</ul>
+					</div>
+				</div>
 			</div>
-		</div>
-	{:else}
-      <p class="font-body text-text/70 text-center">Cargando producto...</p>
-    {/if}
-</section>
+		{:else}
+			<div class="text-center py-12">
+				<div class="inline-block">
+					<div class="w-12 h-12 bg-gray-200 rounded-full animate-pulse mb-4"></div>
+				</div>
+				<p class="text-text-secondary text-lg">Cargando producto...</p>
+			</div>
+		{/if}
+	</section>
+</div>

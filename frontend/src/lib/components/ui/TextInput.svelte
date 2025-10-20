@@ -8,7 +8,7 @@
 </script>
 
 <div class="w-full">
-	<label for={id} class="block mb-2 text-sm font-medium text-neon-pink">
+	<label for={id} class="block mb-2 text-sm font-semibold text-text-primary">
 		{label}
 	</label>
 	{#if type === 'email'}
@@ -18,7 +18,19 @@
 			bind:value
 			{placeholder}
 			{required}
-			class="w-full px-4 py-2 border rounded-2xl bg-black border-neon-pink/40 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-neon-pink focus:border-neon-pink transition-all duration-300"
+			class="
+				w-full px-4 py-3
+				border-2 border-gray-200
+				rounded-lg
+				bg-white
+				text-text-primary
+				placeholder:text-text-secondary/50
+				focus:outline-none
+				focus:border-primary-magenta
+				focus:ring-2
+				focus:ring-primary-magenta/10
+				transition-all duration-300
+			"
 		/>
 	{:else if type === 'tel'}
 		<input
@@ -27,7 +39,19 @@
 			bind:value
 			{placeholder}
 			{required}
-			class="w-full px-4 py-2 border rounded-2xl bg-black border-neon-pink/40 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-neon-pink focus:border-neon-pink transition-all duration-300"
+			class="
+				w-full px-4 py-3
+				border-2 border-gray-200
+				rounded-lg
+				bg-white
+				text-text-primary
+				placeholder:text-text-secondary/50
+				focus:outline-none
+				focus:border-primary-magenta
+				focus:ring-2
+				focus:ring-primary-magenta/10
+				transition-all duration-300
+			"
 		/>
 	{:else}
 		<input
@@ -36,7 +60,19 @@
 			bind:value
 			{placeholder}
 			{required}
-			class="w-full px-4 py-2 border rounded-2xl bg-black border-neon-pink/40 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-neon-pink focus:border-neon-pink transition-all duration-300"
+			class="
+				w-full px-4 py-3
+				border-2 border-gray-200
+				rounded-lg
+				bg-white
+				text-text-primary
+				placeholder:text-text-secondary/50
+				focus:outline-none
+				focus:border-primary-magenta
+				focus:ring-2
+				focus:ring-primary-magenta/10
+				transition-all duration-300
+			"
 		/>
 	{/if}
 </div>

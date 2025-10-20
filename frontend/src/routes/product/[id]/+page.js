@@ -6,8 +6,10 @@ export async function load({ fetch, params }) {
 	const productId = params.id;
 
 	try {
-		// Llamamos al endpoint del backend para obtener un producto por ID
-		const res = await fetch(`http://host.docker.internal:8080/api/v1/products/${productId}`);
+		// Llamamos al endpoint del backend usando ruta relativa
+		// En desarrollo, Vite redirige esto al backend
+		// En producción, debe estar configurado en el reverse proxy
+		const res = await fetch(`/api/v1/products/${productId}`);
 
 		if (!res.ok) {
 			// Si el producto no se encuentra (404) o hay otro error

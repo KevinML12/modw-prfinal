@@ -11,6 +11,7 @@ WORKDIR /app
 
 # Copiamos solo los archivos de manifiesto para aprovechar el caché de Docker
 COPY package.json pnpm-lock.yaml ./
+COPY .npmrc ./
 
 # Instalamos las dependencias
 RUN pnpm install

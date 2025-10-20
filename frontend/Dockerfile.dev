@@ -7,11 +7,20 @@ RUN corepack enable
 # Establecemos el directorio de trabajo
 WORKDIR /app
 
-# Copiamos los archivos de manifiesto para instalar dependencias
-# Docker usará el caché si no han cambiado, haciendo todo más rápido
-COPY package.json pnpm-lock.yaml ./
+# Configuramos pnpm store location ANTES de instalar
+RUN pnpm config set store-dir /app/.pnpm-store
+
+# Copiamos package.json primero
+COPY package.json ./
+
+# Copiamos pnpm-lock.yaml si existe (opcional)
+COPY pnpm-lock.yaml* ./
+
+# Copiamos .npmrc si existe
+COPY .npmrc* ./
 
 # Instalamos las dependencias
+# Si no hay lock file, pnpm lo generará
 RUN pnpm install
 
 # Exponemos el puerto del servidor de desarrollo de Vite
