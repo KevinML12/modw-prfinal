@@ -1,14 +1,23 @@
-/* Importa las funcionalidades base de Tailwind CSS */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Aquí aplicamos los estilos globales a la etiqueta <body>.
-  Tailwind reemplazará `bg-background` y `text-text` con los colores
-  que definimos en `tailwind.config.cjs`. ¡Esta es la forma correcta!
-*/
 @layer base {
-  body {
-    @apply bg-background text-text;
-  }
+	/* Aquí aplicamos los estilos base de tu diseño
+    a toda la aplicación.
+  */
+	body {
+		@apply bg-background text-text font-body;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		@apply font-headings;
+	}
 }

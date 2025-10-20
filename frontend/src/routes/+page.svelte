@@ -1,119 +1,98 @@
 <script>
 	import ProductCard from '$lib/components/ProductCard.svelte';
-	import { brand } from '$lib/config/brand.config.js';
+	// CORRECCIÓN: Importar desde 'heroicons-svelte/outline'
+	// BUENO:
+	import { Search as SearchIcon } from 'svelte-hero-icons/outline';
 
+	// 1. Script (Carga de datos)
 	export let data;
-	$: products = data.products || [];
-	$: initialError = data.error || null;
+	let products = data.products || [];
 
-	// Estado para búsqueda
+	// 2. Lógica de Búsqueda (simplificada por ahora)
 	let searchQuery = '';
-	let searchResults = [];
 	let isLoading = false;
 	let searchError = null;
-	let isSearching = false;
+	let initialProducts = products; // Guardamos los productos iniciales
 
 	async function performSearch() {
-		if (!searchQuery.trim()) {
-			isSearching = false;
-			searchResults = [];
+		if (searchQuery.length < 3) {
+			products = initialProducts;
 			searchError = null;
 			return;
 		}
-		isLoading = true;
-		isSearching = true;
-		searchError = null;
-		searchResults = [];
 
+		isLoading = true;
+		searchError = null;
 		try {
-			const response = await fetch('http://localhost:8080/api/v1/products/search', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ query: searchQuery }),
-			});
-			if (!response.ok) {
-				const errorData = await response.json();
-				throw new Error(errorData.error || `Error ${response.status}`);
+			const res = await fetch(
+				`/api/v1/products/search?q=${encodeURIComponent(searchQuery)}`
+			);
+			if (!res.ok) throw new Error('Error en la búsqueda');
+			const data = await res.json();
+			products = data.products || [];
+
+			if (products.length === 0) {
+				searchError = 'No se encontraron productos para tu búsqueda.';
 			}
-			searchResults = await response.json();
 		} catch (err) {
-			console.error('Error en búsqueda semántica:', err);
-			searchError = err.message || 'Ocurrió un error al buscar.';
+			searchError = 'No se pudo conectar al servicio de búsqueda.';
+			products = [];
 		} finally {
 			isLoading = false;
 		}
 	}
-
-	// Determina qué productos mostrar
-	$: productsToShow = isSearching ? searchResults : products;
 </script>
 
 <svelte:head>
-	<title>{brand.seo.title}</title>
-	<meta name="description" content={brand.seo.description} />
+	<title>Nuestra Colección - Moda Orgánica</title>
 </svelte:head>
 
-<section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-	<h1 class="font-headings text-text mb-8 text-center text-4xl font-bold tracking-tight md:text-5xl">
+<section class="text-center my-12 md:my-16">
+	<h1 class="text-4xl md:text-5xl font-bold font-headings">
 		Nuestra Colección
 	</h1>
+</section>
 
-	<!-- Campo de búsqueda -->
-	<div class="mb-10 max-w-xl mx-auto">
-		<form on:submit|preventDefault={performSearch} class="flex gap-2">
-			<input
-				type="search"
-				bind:value={searchQuery}
-				placeholder="Buscar por descripción..."
-				class="font-body border-border text-text placeholder:text-text/50 focus:border-primary focus:ring-primary flex-grow rounded-md bg-card shadow-sm"
-			/>
-			<button
-				type="submit"
-				class="font-headings bg-primary rounded-md px-5 py-2 text-white transition-colors hover:bg-secondary focus:bg-secondary disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-background"
-				disabled={isLoading}
-			>
-				{#if isLoading} Buscando... {:else} Buscar {/if}
-			</button>
-		</form>
-
-		{#if !isSearching && !searchQuery}
-			<p class="text-center text-sm text-text/60 mt-2">
-				O prueba nuestra búsqueda por descripción.
-			</p>
+<section class="max-w-2xl mx-auto mb-12">
+	<form
+		on:submit|preventDefault={performSearch}
+		class="flex items-center gap-2"
+	>
+		<input
+			type="text"
+			bind:value={searchQuery}
+			placeholder="Buscar por descripción (ej: 'anillo de plata')..."
+			class="flex-grow p-3 rounded-lg bg-secondary border border-gray-700 text-text placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary"
+		/>
+		<button
+			type="submit"
+			class="p-3 rounded-lg bg-primary text-primary-content transition-transform active:scale-95 hover:brightness-90"
+		>
+			<SearchIcon class="w-6 h-6" />
+		</button>
+	</form>
+	<div class="h-4 mt-2 text-center text-sm">
+		{#if isLoading}
+			<p class="opacity-70">Buscando...</p>
+		{/if}
+		{#if searchError}
+			<p class="text-red-400">{searchError}</p>
 		{/if}
 	</div>
+</section>
 
-	<!-- Manejo de errores o estados -->
-	{#if initialError && !isSearching}
-		<div class="bg-red-100 dark:bg-red-900/30 border-red-400 text-red-700 dark:text-red-300 rounded-lg border p-4 text-center">
-			Error: {initialError}
-		</div>
-	{:else if isSearching}
-		{#if isLoading}
-			<p class="font-body text-text/70 text-center">Buscando...</p>
-		{:else if searchError}
-			<div class="bg-yellow-100 dark:bg-yellow-900/30 border-yellow-400 text-yellow-800 dark:text-yellow-300 rounded-lg border p-4 text-center">
-				Error: {searchError}
-			</div>
-		{:else if searchResults.length === 0}
-			<p class="font-body text-text/70 text-center">
-				No hay resultados para "{searchQuery}".
-			</p>
-		{:else}
-			<p class="font-body text-text/70 mb-6 text-center">
-				Resultados para "{searchQuery}":
-			</p>
-		{/if}
-	{/if}
-
-	<!-- Cuadrícula de productos -->
-	{#if !isLoading && productsToShow.length > 0}
-		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-			{#each productsToShow as product (product.id)}
+<section class="max-w-7xl mx-auto">
+	{#if products.length > 0}
+		<div
+			class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+		>
+			{#each products as product (product.id)}
 				<ProductCard {product} />
 			{/each}
 		</div>
-	{:else if !isLoading && !isSearching && products.length === 0 && !initialError}
-		<p class="font-body text-text/70 text-center text-xl">Colección vacía.</p>
+	{:else}
+		<div classs="text-center py-16">
+			<p class="text-xl opacity-70">No hay productos para mostrar.</p>
+		</div>
 	{/if}
 </section>
