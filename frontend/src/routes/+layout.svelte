@@ -1,7 +1,5 @@
 <script>
-  // ... (script sin cambios, importa todo lo necesario) ...
   import '../app.css';
-  import { brand } from '$lib/config/brand.config.js';
   import { cart } from '$lib/stores/cart.store.js';
   import { theme } from '$lib/stores/theme.store.js';
   import ThemeToggle from '$lib/components/ThemeToggle.svelte';
@@ -33,9 +31,6 @@
     }
     return `${r} ${g} ${b}`;
   }
-
-  const lightColors = brand.identity.colors.light;
-  const darkColors = brand.identity.colors.dark;
 </script>
 
 <svelte:head>
@@ -50,8 +45,8 @@
   <link rel="icon" href="/icons/favicon-32x32.png" type="image/png" sizes="32x32" />
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
   <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content={lightColors.primary} media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content={darkColors.background} media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#FF1493" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0A0A0A" media="(prefers-color-scheme: dark)">
   <style>
     :root {
       --color-primary: 255 20 147;
@@ -78,7 +73,7 @@
         href="/"
         class="font-headings text-neon-pink text-2xl font-bold transition-all duration-300 hover:text-neon-yellow hover:shadow-neon-pink focus:outline-none focus:ring-2 focus:ring-neon-pink focus:ring-offset-2 focus:ring-offset-black rounded-lg px-2"
       >
-        {brand.identity.name}
+        Moda Orgánica
       </a>
       <div class="flex items-center space-x-6">
         <a
@@ -126,7 +121,7 @@
   <footer class="bg-dark-gray mt-16 w-full border-t border-neon-pink/30 py-8 transition-colors duration-300">
     <div class="text-white/60 mx-auto max-w-7xl px-4 text-center">
       <p class="font-body text-sm">
-        © {new Date().getFullYear()} {brand.identity.name}. Todos los derechos reservados.
+        © {new Date().getFullYear()} Moda Orgánica. Todos los derechos reservados.
       </p>
       <p class="mt-2 text-xs text-neon-pink/60">
         Proyecto Fénix - Moda Orgánica

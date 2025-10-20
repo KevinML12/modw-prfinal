@@ -1,8 +1,6 @@
 <script>
 	import ProductCard from '$lib/components/ProductCard.svelte';
-	// CORRECCIÓN: Importar desde 'heroicons-svelte/outline'
-	// BUENO:
-	import { Search as SearchIcon } from 'svelte-hero-icons/outline';
+	import { Search as SearchIcon } from 'svelte-hero-icons';
 
 	// 1. Script (Carga de datos)
 	export let data;
