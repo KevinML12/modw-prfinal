@@ -5,7 +5,8 @@
 @layer base {
 	/* Estilos base del diseño Gumroad neón */
 	body {
-		@apply bg-black text-white font-body;
+		@apply text-white font-body;
+		background-color: #0A0A0A;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 	}
