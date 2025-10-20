@@ -1,6 +1,5 @@
 <script>
 	import ProductCard from '$lib/components/ProductCard.svelte';
-	import { Search as SearchIcon } from 'svelte-hero-icons';
 
 	// 1. Script (Carga de datos)
 	export let data;
@@ -67,7 +66,9 @@
 			type="submit"
 			class="p-3 rounded-2xl bg-neon-yellow text-black transition-all duration-300 hover:shadow-neon-yellow hover:scale-110 active:scale-95"
 		>
-			<SearchIcon class="w-6 h-6" />
+			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+				<path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.5 5.5a7.5 7.5 0 0 0 10.5 10.5Z" />
+			</svg>
 		</button>
 	</form>
 	<div class="h-4 mt-3 text-center text-sm">

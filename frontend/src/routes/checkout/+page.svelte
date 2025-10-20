@@ -5,7 +5,7 @@
 
 	// Importamos nuestros nuevos componentes
 	import TextInput from '$lib/components/ui/TextInput.svelte';
-	import CheckoutItem from '$lib/components/checkout/CheckoutItem.svelte';
+	import CheckoutItem from './CheckoutItem.svelte';
 
 	// Estado del Carrito
 	let currentCart = { items: [], subtotal: 0, total: 0, shippingCost: 0 };
@@ -74,7 +74,7 @@
 </script>
 
 <svelte:head>
-	<title>Checkout - {brand.identity.name}</title>
+	<title>Checkout - Moda Orgánica</title>
 </svelte:head>
 
 <div class="max-w-7xl mx-auto px-4 py-8">

@@ -1,7 +1,6 @@
 <script>
 	/** @type {import('$lib/types').CartItem} */
 	export let item;
-    import { brand } from '$lib/config/brand.config.js';
 
 	// Formateador de moneda
 	const currency = (value) =>

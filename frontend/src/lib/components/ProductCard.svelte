@@ -1,7 +1,6 @@
 <script>
 	import { cart } from '$lib/stores/cart.store.js';
 	import { fade } from 'svelte/transition';
-  import { brand } from '$lib/config/brand.config.js';
 	/** @type {import('$lib/types').Product} */
 	export let product;
 

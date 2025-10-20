@@ -3,11 +3,9 @@
 @tailwind utilities;
 
 @layer base {
-	/* Aquí aplicamos los estilos base de tu diseño
-    a toda la aplicación.
-  */
+	/* Estilos base del diseño Gumroad neón */
 	body {
-		@apply bg-background text-text font-body;
+		@apply bg-black text-white font-body;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 	}
