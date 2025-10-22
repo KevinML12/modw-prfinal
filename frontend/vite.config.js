@@ -4,8 +4,9 @@ import { defineConfig } from 'vite';
 export default defineConfig({
 	plugins: [sveltekit()],
 	server: {
+		host: '0.0.0.0',
 		proxy: {
-			// Redirige /api/v1/* al backend de Go
+			// Redirige /api/v1/* al backend de Go (en Docker)
 			'/api/v1': {
 				target: 'http://backend:8080',
 				changeOrigin: true,

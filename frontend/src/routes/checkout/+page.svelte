@@ -4,9 +4,10 @@
 	import { cart } from '$lib/stores/cart.store.js';
 	import { currencyFormatter } from '$lib/stores/currency.store.js';
 
-	// Importamos nuestros nuevos componentes
+	// Importamos nuestros componentes
 	import TextInput from '$lib/components/ui/TextInput.svelte';
 	import CheckoutItem from './CheckoutItem.svelte';
+	import LocationSelector from '$lib/components/LocationSelector.svelte';
 
 	// Estado del Carrito
 	let currentCart = { items: [], subtotal: 0, total: 0, shippingCost: 0 };
@@ -23,31 +24,46 @@
 	let email = '';
 	let fullName = '';
 	let phone = '';
-	let municipality = '';
+	let shippingLocation = {
+		department: '',
+		municipality: '',
+		address: ''
+	};
+
+	// Referencias a componentes para validación
+	let locationSelectorRef;
 
 	// Lógica de Envío
 	let shippingCost = 0;
 	let total = 0;
 
-	function calculateShipping(mun) {
+	function calculateShipping(location) {
 		const { shipping } = brand.businessRules;
-		if (shipping.localZones.includes(mun)) {
+		
+		// Si no hay municipio, sin costo
+		if (!location.municipality) {
+			return 0;
+		}
+
+		// Obtener el municipio seleccionado para verificar si es local
+		const munName = location.municipality;
+		
+		// Verificar si es zona local (Huehuetenango o Chiantla)
+		if (shipping.localZones.some(zone => munName.toLowerCase().includes(zone.toLowerCase()))) {
 			return shipping.costs.local;
 		}
-		// Si el campo no está vacío pero no es local, es nacional
-		if (mun.length > 2) {
-			return shipping.costs.national;
-		}
-		return 0; // Sin costo si está vacío
+
+		// Resto del país
+		return shipping.costs.national;
 	}
 
 	function recalculateTotal() {
-		shippingCost = calculateShipping(municipality.toLowerCase().trim());
+		shippingCost = calculateShipping(shippingLocation);
 		total = currentCart.subtotal + shippingCost;
 	}
 
-	// Re-calculamos cuando la municipalidad cambia
-	$: recalculateTotal(municipality);
+	// Re-calculamos cuando la ubicación cambia
+	$: recalculateTotal(shippingLocation);
 
 	// Formateador de moneda
 	const currency = currencyFormatter.format;
@@ -72,9 +88,9 @@
 			errors.push('Teléfono inválido (mínimo 7 dígitos)');
 		}
 
-		// Municipality validation
-		if (!municipality.trim()) {
-			errors.push('Municipalidad requerida');
+		// Location validation
+		if (locationSelectorRef && !locationSelectorRef.validate()) {
+			errors.push('Por favor completa la ubicación correctamente');
 		}
 
 		// Cart validation
@@ -97,7 +113,8 @@
 
 		console.log('Enviando pedido válido:');
 		const orderPayload = {
-			customer: { email, fullName, phone, municipality },
+			customer: { email, fullName, phone },
+			shipping: shippingLocation,
 			items: currentCart.items,
 			shippingCost,
 			total,
@@ -177,21 +194,29 @@
 								bind:value={phone}
 								required
 							/>
-							<TextInput
-								label="Municipalidad (para envío)"
-								id="municipality"
-								placeholder="ej: huehuetenango"
-								bind:value={municipality}
-								required
-							/>
 						</div>
+					</section>
+
+					<!-- Ubicación de Envío -->
+					<section class="bg-bg-card rounded-2xl p-8 border-2 border-transparent hover:border-primary-magenta/30 transition-colors">
+						<h2 class="text-2xl font-bold text-text-primary mb-6 flex items-center gap-3">
+							<div class="w-8 h-8 bg-gradient-magenta rounded-lg flex items-center justify-center text-white text-lg font-black">
+								2
+							</div>
+							Ubicación de Envío
+						</h2>
+						<LocationSelector
+							bind:this={locationSelectorRef}
+							bind:value={shippingLocation}
+							required={true}
+						/>
 					</section>
 
 					<!-- Método de Pago -->
 					<section class="bg-bg-card rounded-2xl p-8 border-2 border-transparent hover:border-primary-magenta/30 transition-colors">
 						<h2 class="text-2xl font-bold text-text-primary mb-6 flex items-center gap-3">
 							<div class="w-8 h-8 bg-gradient-magenta rounded-lg flex items-center justify-center text-white text-lg font-black">
-								2
+								3
 							</div>
 							Método de Pago
 						</h2>

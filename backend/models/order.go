@@ -43,13 +43,27 @@ type Order struct {
 	CustomerPhone string `json:"customer_phone" gorm:"not null"`
 
 	// --- Información de Envío ---
-	// ShippingAddress: Dirección de envío completa (requerida).
-	ShippingAddress string `json:"shipping_address" gorm:"not null"`
+	// ShippingDepartment: Departamento de envío (requerido).
+	// ID del departamento de Guatemala (ej: GT-01, GT-13).
+	ShippingDepartment string `json:"shipping_department" gorm:"not null"`
 
 	// ShippingMunicipality: Municipio/ciudad de envío (requerido para calcular costo).
+	// Nombre legible del municipio seleccionado.
 	ShippingMunicipality string `json:"shipping_municipality" gorm:"not null"`
 
-	// ShippingCost: Costo de envío calculado según el municipio.
+	// ShippingAddress: Dirección de envío detallada (requerida).
+	// Incluye calle, número, apto, zona, etc.
+	ShippingAddress string `json:"shipping_address" gorm:"not null;type:text"`
+
+	// ShippingZone: Zona de envío clasificada (metropolitana, central, occidente, oriente, norte, etc).
+	// Se usa para cálculo de costos de envío según ubicación.
+	ShippingZone string `json:"shipping_zone" gorm:"type:varchar(50);default:'central'"`
+
+	// IsSpecialDeliveryZone: Indica si la ubicación es zona especial de envío local (Huehuetenango, Chiantla).
+	// Permite aplicar lógica especial para entregas locales.
+	IsSpecialDeliveryZone bool `json:"is_special_delivery_zone" gorm:"default:false"`
+
+	// ShippingCost: Costo de envío calculado según la zona de envío.
 	ShippingCost float64 `json:"shipping_cost" gorm:"type:decimal(10,2);default:0"`
 
 	// --- Totales ---

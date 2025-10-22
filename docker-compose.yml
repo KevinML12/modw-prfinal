@@ -73,6 +73,48 @@ services:
     networks:
       - fenix-net # <-- Usa fenix-net
 
+  # --- Servicio de Playwright para E2E Tests ---
+  # Uso: docker-compose --profile test up -d playwright
+  # Tests: docker-compose exec playwright pnpm test:e2e
+  playwright:
+    container_name: phoenix_playwright
+    image: mcr.microsoft.com/playwright:v1.40.0-focal
+    profiles:
+      - test  # Solo se levanta con --profile test
+    depends_on:
+      frontend:
+        condition: service_started
+      backend:
+        condition: service_started
+    volumes:
+      # Montar directorio frontend
+      - ./frontend:/app
+      # Volumen anónimo para node_modules (evita conflictos con host)
+      - /app/node_modules
+      # Volúmenes nombrados para reportes y resultados
+      - playwright-report:/app/playwright-report
+      - playwright-results:/app/test-results
+    working_dir: /app
+    environment:
+      # URLs internas de Docker para acceder a los servicios
+      BASE_URL: http://frontend:5173
+      API_URL: http://backend:8080
+      NODE_ENV: test
+      # Variables para Playwright
+      PLAYWRIGHT_HTML_REPORT: ./playwright-report
+      PLAYWRIGHT_JSON_REPORT: ./test-results/results.json
+    # Mantener el contenedor vivo para ejecutar tests manualmente
+    # Los tests se ejecutan con: docker-compose exec playwright pnpm test:e2e
+    command: sleep infinity
+    networks:
+      - fenix-net
+    healthcheck:
+      test: ["CMD", "node", "-v"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
 # Definición de las redes personalizadas
 networks:
   fenix-net: # <-- Usa fenix-net
@@ -83,4 +125,9 @@ volumes:
   moda-organica_node_modules:
   ollama_data:
   meili_data:
+    driver: local
+  # Volúmenes para reportes y resultados de Playwright
+  playwright-report:
+    driver: local
+  playwright-results:
     driver: local
