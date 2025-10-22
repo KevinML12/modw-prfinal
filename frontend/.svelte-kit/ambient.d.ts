@@ -31,11 +31,13 @@ declare module '$env/static/private' {
 	export const HOSTNAME: string;
 	export const YARN_VERSION: string;
 	export const npm_node_execpath: string;
+	export const SHLVL: string;
 	export const HOME: string;
 	export const npm_package_json: string;
 	export const COREPACK_ROOT: string;
 	export const COREPACK_ENABLE_DOWNLOAD_PROMPT: string;
 	export const pnpm_config_verify_deps_before_run: string;
+	export const _: string;
 	export const npm_config_registry: string;
 	export const npm_config_node_gyp: string;
 	export const PATH: string;
@@ -89,11 +91,13 @@ declare module '$env/dynamic/private' {
 		HOSTNAME: string;
 		YARN_VERSION: string;
 		npm_node_execpath: string;
+		SHLVL: string;
 		HOME: string;
 		npm_package_json: string;
 		COREPACK_ROOT: string;
 		COREPACK_ENABLE_DOWNLOAD_PROMPT: string;
 		pnpm_config_verify_deps_before_run: string;
+		_: string;
 		npm_config_registry: string;
 		npm_config_node_gyp: string;
 		PATH: string;

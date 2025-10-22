@@ -2,19 +2,19 @@ package main
 
 import (
 	"log"
-	"time" // <-- 1. AÑADE ESTA LÍNEA
+	"time"
 
-	"github.com/gin-contrib/cors" // Para manejar CORS
-	"github.com/gin-gonic/gin"    // Framework web
-	"github.com/joho/godotenv"    // Para cargar .env en desarrollo local
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 
-	// Ajusta las rutas según tu módulo
-	"moda-organica/backend/controllers" // Importa los controladores
-	"moda-organica/backend/db"          // Importa la configuración de la DB
+	"moda-organica/backend/controllers"
+	"moda-organica/backend/db"
+	"moda-organica/backend/models"
 )
 
 func main() {
-	// Carga variables de entorno desde .env (útil para desarrollo local)
+	// Carga variables de entorno desde .env
 	err := godotenv.Load()
 	if err != nil {
 		log.Println("Advertencia: No se pudo cargar el archivo .env.")
@@ -23,51 +23,57 @@ func main() {
 	// Inicializa la conexión con Supabase
 	db.InitSupabase()
 
+	// Obtener la conexión GORM
+	gormDB := db.GetGormDB()
+
+	// Migrar los modelos
+	if gormDB != nil {
+		gormDB.AutoMigrate(&models.Product{}, &models.Order{}, &models.OrderItem{})
+		log.Println("✓ Modelos migrados exitosamente")
+	}
+
 	// Crea una instancia del router Gin
 	router := gin.Default()
 
-	// --- Configuración CORS Explícita ---
+	// Configuración CORS
 	config := cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:4173"}, // Permite ambos puertos
+		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:4173"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "Accept"}, // Añade "Accept"
-		AllowCredentials: true,                                                          // Importante si usarás autenticación basada en cookies/sesiones después
-		MaxAge:           12 * time.Hour,                                                // Tiempo que el navegador puede cachear la respuesta preflight
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "Accept"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
 	}
-	router.Use(cors.New(config)) // Aplicar ANTES de las rutas
-	// --- Fin Configuración CORS ---
+	router.Use(cors.New(config))
 
 	// Instancia el controlador de productos
 	pc := controllers.NewProductController()
 
-	// --- Inicializar Orders (Opcional - requiere GORM configurado) ---
-	// NOTA: Los handlers de órdenes están disponibles pero requieren que se configure
-	// una conexión GORM con la base de datos. Por ahora están comentados.
-	// Para habilitarlos:
-	// 1. Configurar GORM en db/supabase.go con GetGormDB()
-	// 2. Descomentar el siguiente bloque
-	/*
-		gormDB := db.GetGormDB()
-		if gormDB != nil {
-			orderRepo := repositories.NewOrderRepository(gormDB)
-			orderService := services.NewOrderService(orderRepo, gormDB)
-			handlers.RegisterOrderRoutes(router, orderService)
-			log.Println("✓ Rutas de órdenes registradas exitosamente")
-		}
-	*/
-	// --- Fin Órdenes ---
+	// Instancia el controlador de pedidos
+	var orderController *controllers.OrderController
+	if gormDB != nil {
+		orderController = controllers.NewOrderController(gormDB)
+		log.Println("✓ OrderController inicializado exitosamente")
+	} else {
+		log.Println("⚠️ Advertencia: GORM no está disponible, OrderController no inicializado")
+	}
 
 	// Define las rutas de la API v1
-	api := router.Group("/api/v1")
+	apiV1 := router.Group("/api/v1")
 	{
 		// Rutas para productos
-		products := api.Group("/products")
+		products := apiV1.Group("/products")
 		{
 			products.GET("/", pc.GetProducts)
 			products.GET("/:id", pc.GetProductByID)
 			products.POST("/search", pc.SemanticSearchProducts)
 			products.POST("/", pc.CreateProduct)
 			products.PUT("/:id", pc.UpdateProduct)
+		}
+
+		// Rutas para pedidos
+		if orderController != nil {
+			apiV1.POST("/orders", orderController.CreateOrder)
+			log.Println("✓ Endpoint POST /api/v1/orders registrado exitosamente")
 		}
 	}
 

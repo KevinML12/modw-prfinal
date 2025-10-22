@@ -157,7 +157,7 @@
   <div class="max-w-3xl mx-auto flex gap-4 mb-12">
     <input 
       type="text"
-      placeholder="Buscar por descripción (ej: 'anillo de plata')..."
+      placeholder="Buscar por descripción..."
       bind:value={searchQuery}
       class="
         flex-1
@@ -178,6 +178,8 @@
       "
     />
     <button 
+      type="submit"
+      aria-label="Botón de búsqueda"
       class="
         bg-gradient-to-r from-primary-magenta to-primary-purple dark:from-[#FF5CAD] dark:to-[#A161FF]
         hover:shadow-[0_10px_30px_rgba(233,30,140,0.3)] dark:hover:shadow-[0_0_30px_rgba(255,92,173,0.5)]

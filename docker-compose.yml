@@ -1,5 +1,4 @@
 # docker-compose.yml
-version: '3.8'
 
 services:
 
@@ -41,6 +40,7 @@ services:
   # --- Servicio del Frontend (SvelteKit) ---
   frontend:
     container_name: phoenix_frontend
+    image: mcr.microsoft.com/playwright:focal
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
@@ -48,7 +48,10 @@ services:
       - "5173:5173"
     volumes:
       - ./frontend:/app
-      - /app/node_modules
+      - moda-organica_node_modules:/app/node_modules
+    working_dir: /app
+    command: >
+      bash -c "pnpm install && pnpm playwright install && pnpm run dev"
     depends_on:
       - backend
     restart: unless-stopped
@@ -77,6 +80,7 @@ networks:
 
 # Definición de los volúmenes nombrados
 volumes:
+  moda-organica_node_modules:
   ollama_data:
   meili_data:
     driver: local

@@ -181,7 +181,7 @@
 							active:scale-95
 						"
 					>
-						Confirmar Pago - {currency(total)}
+						Pagar Ahora
 					</button>
 				</form>
 			</div>

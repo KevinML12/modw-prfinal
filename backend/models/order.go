@@ -81,31 +81,32 @@ type Order struct {
 // si el producto o sus precios cambian en la base de datos principal.
 type OrderItem struct {
 	// ID: Identificador único del item (UUID), clave primaria.
-	ID uuid.UUID `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid()"`
+	ID uuid.UUID `json:"id" gorm:"type:uuid;primaryKey"`
 
 	// OrderID: Identificador de la orden a la que pertenece este item (Foreign Key).
 	// Indexado para optimizar búsquedas por orden.
-	OrderID uuid.UUID `json:"order_id" gorm:"type:uuid;not null;index"`
+	OrderID uuid.UUID `json:"order_id" gorm:"type:uuid;index"`
 
 	// ProductID: Identificador del producto original (Foreign Key).
+	// Tipo uint para coincidir con la clave primaria de la tabla products.
 	// Se mantiene como referencia, pero no se usa para obtener datos del producto
 	// en OrderItem, ya que usamos ProductName y Price como snapshots.
-	ProductID uint `json:"product_id" gorm:"not null;index"`
+	ProductID uint `json:"product_id" gorm:"index"`
 
 	// ProductName: Snapshot (fotografía) del nombre del producto en el momento de la compra.
 	// Se almacena aquí para mantener un registro histórico exacto, permitiendo
 	// que la orden refleje el nombre del producto como estaba cuando se compró,
 	// incluso si el producto cambia o se elimina posteriormente.
-	ProductName string `json:"product_name" gorm:"not null"`
+	ProductName string `json:"product_name"`
 
 	// Quantity: Cantidad de unidades compradas de este producto.
 	// Debe ser siempre mayor a cero.
-	Quantity int `json:"quantity" gorm:"not null"`
+	Quantity int `json:"quantity"`
 
 	// Price: Snapshot (fotografía) del precio unitario en el momento de la compra.
 	// Se almacena aquí para mantener un registro histórico exacto del precio pagado,
 	// permitiendo auditoría y reportes precisos incluso si el precio del producto cambia.
-	Price float64 `json:"price" gorm:"type:decimal(10,2);not null"`
+	Price float64 `json:"price"`
 
 	// --- Timestamps ---
 	// CreatedAt: Timestamp automático de creación del item en la orden.
@@ -229,4 +230,18 @@ func (oi *OrderItem) Validate() error {
 	}
 
 	return nil
+}
+
+// ============================================================================
+// CARTITEM - DTO para el carrito del cliente
+// ============================================================================
+
+// CartItem representa un artículo en el carrito del cliente
+// Se usa para parsear los datos enviados desde el frontend al crear una orden
+type CartItem struct {
+	// ProductID: Identificador del producto a comprar
+	ProductID uint `json:"product_id" binding:"required"`
+
+	// Quantity: Cantidad de unidades del producto
+	Quantity int `json:"quantity" binding:"required,min=1"`
 }
