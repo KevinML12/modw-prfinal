@@ -1,16 +1,14 @@
 <script>
 	import { brand } from '$lib/config/brand.config.js';
 	import { cart } from '$lib/stores/cart.store.js';
+	import { currencyFormatter } from '$lib/stores/currency.store.js';
 	import { fly } from 'svelte/transition';
 
 	export let data;
 	$: product = data.product;
 	$: error = data.error;
 
-	const formatCurrency = (value) => {
-        if (value == null) return '';
-		return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(value);
-	};
+	const formatCurrency = currencyFormatter.format;
 
 	function handleAddToCart() {
         if (product) {

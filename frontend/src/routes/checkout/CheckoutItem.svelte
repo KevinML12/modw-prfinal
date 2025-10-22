@@ -1,15 +1,12 @@
 <script>
 	import { cart } from '$lib/stores/cart.store.js';
+	import { currencyFormatter } from '$lib/stores/currency.store.js';
 
 	/** @type {import('$lib/types').CartItem} */
 	export let item;
 
 	// Formateador de moneda
-	const currency = (value) =>
-		new Intl.NumberFormat('es-MX', {
-			style: 'currency',
-			currency: 'MXN',
-		}).format(value);
+	const currency = currencyFormatter.format;
 
 	function removeItem() {
 		cart.removeProduct(item.id);

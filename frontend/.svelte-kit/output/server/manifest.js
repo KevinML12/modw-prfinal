@@ -10,7 +10,7 @@ return {
 	assets: new Set(["icons/android-chrome-192x192.png","icons/android-chrome-512x512.png","icons/apple-touch-icon.png","icons/favicon-16x16.png","icons/favicon-32x32.png","icons/favicon.ico","manifest.json","service-worker.js"]),
 	mimeTypes: {".png":"image/png",".json":"application/json"},
 	_: {
-		client: {start:"_app/immutable/entry/start.CtXAeyqS.js",app:"_app/immutable/entry/app.JlQKl896.js",imports:["_app/immutable/entry/start.CtXAeyqS.js","_app/immutable/chunks/B9uhCJpS.js","_app/immutable/chunks/Lu49ep7q.js","_app/immutable/chunks/CWuBUEw-.js","_app/immutable/entry/app.JlQKl896.js","_app/immutable/chunks/Lu49ep7q.js","_app/immutable/chunks/IHki7fMi.js"],stylesheets:[],fonts:[],uses_env_dynamic_public:false},
+		client: {start:"_app/immutable/entry/start.0ozmplHN.js",app:"_app/immutable/entry/app.C3BXeglT.js",imports:["_app/immutable/entry/start.0ozmplHN.js","_app/immutable/chunks/URQBqU43.js","_app/immutable/chunks/Lu49ep7q.js","_app/immutable/chunks/CWuBUEw-.js","_app/immutable/entry/app.C3BXeglT.js","_app/immutable/chunks/Lu49ep7q.js","_app/immutable/chunks/IHki7fMi.js"],stylesheets:[],fonts:[],uses_env_dynamic_public:false},
 		nodes: [
 			__memo(() => import('./nodes/0.js')),
 			__memo(() => import('./nodes/1.js')),

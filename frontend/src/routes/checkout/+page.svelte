@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { brand } from '$lib/config/brand.config.js';
 	import { cart } from '$lib/stores/cart.store.js';
+	import { currencyFormatter } from '$lib/stores/currency.store.js';
 
 	// Importamos nuestros nuevos componentes
 	import TextInput from '$lib/components/ui/TextInput.svelte';
@@ -49,15 +50,52 @@
 	$: recalculateTotal(municipality);
 
 	// Formateador de moneda
-	const currency = (value) =>
-		new Intl.NumberFormat('es-GT', {
-			style: 'currency',
-			currency: 'GTQ',
-		}).format(value);
+	const currency = currencyFormatter.format;
+
+	// Validación del formulario
+	function validateForm() {
+		const errors = [];
+
+		// Email validation
+		if (!email || !email.includes('@')) {
+			errors.push('Email inválido');
+		}
+
+		// Name validation
+		if (!fullName.trim()) {
+			errors.push('Nombre completo requerido');
+		}
+
+		// Phone validation (básico - mínimo 7 dígitos)
+		const phoneDigits = phone.replace(/\D/g, '');
+		if (!phone || phoneDigits.length < 7) {
+			errors.push('Teléfono inválido (mínimo 7 dígitos)');
+		}
+
+		// Municipality validation
+		if (!municipality.trim()) {
+			errors.push('Municipalidad requerida');
+		}
+
+		// Cart validation
+		if (!currentCart.items || currentCart.items.length === 0) {
+			errors.push('El carrito está vacío');
+		}
+
+		return errors;
+	}
 
 	// Manejador del formulario (aquí irá la lógica de pago)
 	function handleSubmit() {
-		console.log('Enviando pedido:');
+		// Validar primero
+		const errors = validateForm();
+
+		if (errors.length > 0) {
+			alert('Por favor corrige los siguientes errores:\n\n' + errors.join('\n'));
+			return;
+		}
+
+		console.log('Enviando pedido válido:');
 		const orderPayload = {
 			customer: { email, fullName, phone, municipality },
 			items: currentCart.items,
@@ -69,7 +107,7 @@
 		// 1. Llamar al endpoint de 'create-payment-intent' en nuestro backend de Go
 		// 2. Usar Stripe.js para confirmar el pago
 		// 3. Si es exitoso, redirigir a la página de "gracias"
-		alert('¡Pedido (simulado) enviado! Revisa la consola.');
+		alert('¡Pedido enviado exitosamente! Ahora procede al pago con Stripe.');
 	}
 </script>
 

@@ -23,10 +23,16 @@ function getSystemTheme() {
  */
 function getInitialTheme() {
   if (!browser) return 'light';
-  const saved = localStorage.getItem('theme');
-  if (saved === 'light' || saved === 'dark') {
-    return saved;
+  
+  try {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'light' || saved === 'dark') {
+      return saved;
+    }
+  } catch (e) {
+    console.warn('localStorage not available, using system preference:', e.message);
   }
+  
   return getSystemTheme();
 }
 
@@ -37,13 +43,17 @@ function getInitialTheme() {
 function applyTheme(theme) {
   if (!browser) return;
   
-  if (theme === 'dark') {
-    document.documentElement.classList.add('dark');
-  } else {
-    document.documentElement.classList.remove('dark');
+  try {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    
+    localStorage.setItem('theme', theme);
+  } catch (e) {
+    console.warn('Could not save theme to localStorage:', e.message);
   }
-  
-  localStorage.setItem('theme', theme);
 }
 
 // Inicializar tema

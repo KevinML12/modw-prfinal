@@ -4,8 +4,20 @@
  */
 export async function load({ fetch }) {
 	try {
+		// Configurar timeout de 8 segundos
+		const controller = new AbortController();
+		const timeout = setTimeout(() => controller.abort(), 8000);
+
 		// Usa el nombre del servicio Docker para SSR, SvelteKit lo maneja.
-		const res = await fetch('http://backend:8080/api/v1/products');
+		const res = await fetch('http://backend:8080/api/v1/products', {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+			},
+			signal: controller.signal,
+		});
+
+		clearTimeout(timeout);
 
 		// Verifica si la respuesta fue exitosa (código 2xx)
 		if (!res.ok) {

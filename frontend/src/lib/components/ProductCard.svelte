@@ -49,7 +49,7 @@
       />
     {:else}
       <!-- Placeholder elegante si no hay imagen -->
-      <div class="w-full h-full bg-gradient-soft-pink flex items-center justify-center">
+      <div class="w-full h-full bg-soft-pink flex items-center justify-center">
         <div class="text-center">
           <span class="text-8xl opacity-20">💍</span>
           <p class="text-text-tertiary mt-4 text-sm">Imagen próximamente</p>

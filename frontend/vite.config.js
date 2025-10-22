@@ -9,6 +9,18 @@ export default defineConfig({
 			'/api/v1': {
 				target: 'http://backend:8080',
 				changeOrigin: true,
+				rewrite: (path) => {
+					// Ensure we don't double-prefix the path
+					return path.replace(/^\/api\/v1/, '/api/v1');
+				},
+				configure: (proxy, _options) => {
+					proxy.on('error', (err, _req, _res) => {
+						console.error('❌ Proxy error:', err.message);
+					});
+					proxy.on('proxyRes', (proxyRes, req, _res) => {
+						console.log(`✅ [${req.method}] ${req.url} -> ${proxyRes.statusCode}`);
+					});
+				},
 			}
 		}
 	}
