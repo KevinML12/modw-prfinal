@@ -57,7 +57,7 @@ test.describe('Flujo de Checkout (SVELTE-AWARE)', () => {
       await navigateToProduct(page, TEST_PRODUCT_IDS[0]);
       await addToCart(page, 2);
     } catch (error) {
-      console.warn('⚠️ Fallo agregar producto 1 en beforeEach:', error.message);
+      console.warn('Fallo agregar producto 1 en beforeEach:', error.message);
     }
 
     // 3. Setup: Agregar segundo producto (carrito más realista)
@@ -65,7 +65,7 @@ test.describe('Flujo de Checkout (SVELTE-AWARE)', () => {
       await navigateToProduct(page, TEST_PRODUCT_IDS[1]);
       await addToCart(page, 1);
     } catch (error) {
-      console.warn('⚠️ Fallo agregar producto 2 en beforeEach:', error.message);
+      console.warn('Fallo agregar producto 2 en beforeEach:', error.message);
     }
 
     // 4. Verificar que tenemos 2 items
@@ -387,7 +387,7 @@ test.describe('Flujo de Checkout (SVELTE-AWARE)', () => {
     } catch (error) {
       // Si el submit falla, puede ser que no hay backend real
       console.warn(
-        '⚠️ Submit falló (esperado sin backend real):',
+        'Submit falló (esperado sin backend real):',
         error.message
       );
       test.skip();

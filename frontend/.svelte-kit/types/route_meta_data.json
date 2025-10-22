@@ -3,7 +3,11 @@
 		"src/routes/+page.js"
 	],
 	"/checkout": [],
+	"/login": [],
+	"/orders": [],
 	"/product/[id]": [
 		"src/routes/product/[id]/+page.js"
-	]
+	],
+	"/register": [],
+	"/test-auth": []
 }

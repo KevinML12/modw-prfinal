@@ -26,10 +26,11 @@ services:
     environment:
       SUPABASE_URL: ${SUPABASE_URL}
       SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY}
+      SUPABASE_JWT_SECRET: ${SUPABASE_JWT_SECRET}
       GIN_MODE: debug
       MEILI_HOST: http://meilisearch:7700
       MEILI_MASTER_KEY: unaclavesupersecreta123
-      OLLAMA_URL: http://ollama:11434 # <-- AÑADIDO
+      OLLAMA_URL: http://ollama:11434
     depends_on:
       - meilisearch
       - ollama # <-- AÑADIDO
@@ -50,13 +51,16 @@ services:
       - ./frontend:/app
       - moda-organica_node_modules:/app/node_modules
     working_dir: /app
-    command: >
-      bash -c "pnpm install && pnpm playwright install && pnpm run dev"
+    environment:
+      VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
+      VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
+      VITE_API_URL: http://backend:8080
+    command: bash -c "pnpm install && pnpm playwright install && pnpm run dev --host"
     depends_on:
       - backend
     restart: unless-stopped
     networks:
-      - fenix-net # <-- Usa fenix-net
+      - fenix-net
 
   # --- Servicio de Búsqueda (MeiliSearch) ---
   meilisearch:

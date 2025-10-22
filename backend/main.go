@@ -29,7 +29,7 @@ func main() {
 	// Migrar los modelos
 	if gormDB != nil {
 		gormDB.AutoMigrate(&models.Product{}, &models.Order{}, &models.OrderItem{})
-		log.Println("✓ Modelos migrados exitosamente")
+		log.Println("Modelos migrados exitosamente")
 	}
 
 	// Crea una instancia del router Gin
@@ -52,9 +52,9 @@ func main() {
 	var orderController *controllers.OrderController
 	if gormDB != nil {
 		orderController = controllers.NewOrderController(gormDB)
-		log.Println("✓ OrderController inicializado exitosamente")
+		log.Println("OrderController inicializado exitosamente")
 	} else {
-		log.Println("⚠️ Advertencia: GORM no está disponible, OrderController no inicializado")
+		log.Println("Advertencia: GORM no está disponible, OrderController no inicializado")
 	}
 
 	// Define las rutas de la API v1
@@ -73,7 +73,7 @@ func main() {
 		// Rutas para pedidos
 		if orderController != nil {
 			apiV1.POST("/orders", orderController.CreateOrder)
-			log.Println("✓ Endpoint POST /api/v1/orders registrado exitosamente")
+			log.Println("Endpoint POST /api/v1/orders registrado exitosamente")
 		}
 	}
 

@@ -55,7 +55,7 @@ export async function waitForSvelteKitHydration(page) {
 
     const duration = Date.now() - startTime;
     if (duration > 10000) {
-      console.warn(`⚠️ Hydration tardó ${duration}ms (Docker latency)`);
+      console.warn(`Hydration tardó ${duration}ms (Docker latency)`);
     }
   } catch (error) {
     throw new Error(
@@ -100,10 +100,10 @@ export async function clearSvelteStores(page) {
     });
 
     if (cartAfterClear !== null) {
-      console.warn('⚠️ localStorage("cart") no se limpió completamente');
+      console.warn('localStorage("cart") no se limpió completamente');
     }
   } catch (error) {
-    console.warn(`⚠️ Error limpiando Svelte stores: ${error.message}`);
+    console.warn(`Error limpiando Svelte stores: ${error.message}`);
     // No lanzar error porque algunos tests pueden funcionar sin esta limpieza
   }
 }
@@ -158,7 +158,7 @@ export async function waitForSvelteTransition(page, selector, options = {}) {
     );
   } catch (error) {
     console.warn(
-      `⚠️ Transición de Svelte no completó para "${selector}" (${state}). ` +
+      `Transición de Svelte no completó para "${selector}" (${state}). ` +
       `Continuando de todas formas. Error: ${error.message}`
     );
     // No lanzar error porque el elemento podría estar visible aunque la transición siga activa
@@ -251,7 +251,7 @@ export async function triggerSvelteReactivity(page) {
     // Esperar adicional en el cliente de Playwright
     await page.waitForTimeout(50);
   } catch (error) {
-    console.warn(`⚠️ Error en triggerSvelteReactivity: ${error.message}`);
+    console.warn(`Error en triggerSvelteReactivity: ${error.message}`);
   }
 }
 
@@ -288,7 +288,7 @@ export async function getCartFromStore(page) {
 
     return cart;
   } catch (error) {
-    console.warn(`⚠️ Error obteniendo carrito del store: ${error.message}`);
+    console.warn(`Error obteniendo carrito del store: ${error.message}`);
     return { items: [], total: 0 };
   }
 }
@@ -330,7 +330,7 @@ export async function waitForNavigationComplete(page, options = {}) {
     await page.waitForTimeout(100);
   } catch (error) {
     console.warn(
-      `⚠️ Navegación no completó completamente en ${timeout}ms. ` +
+      `Navegación no completó completamente en ${timeout}ms. ` +
       `Continuando de todas formas. Error: ${error.message}`
     );
     // No lanzar error porque podemos estar en un estado suficientemente cargado

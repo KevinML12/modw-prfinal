@@ -26,6 +26,20 @@ RUN pnpm install
 # Exponemos el puerto del servidor de desarrollo de Vite
 EXPOSE 5173
 
-# El comando para iniciar el servidor de desarrollo.
-# El flag '--host' es CRUCIAL para que sea accesible desde fuera del contenedor.
-CMD ["pnpm", "run", "dev", "--host"]
+# Crear un entrypoint script que genere .env desde variables de entorno
+RUN echo '#!/bin/bash\n\
+echo "Generando .env desde variables de entorno..."\n\
+{\n\
+  echo "VITE_SUPABASE_URL=${VITE_SUPABASE_URL}"\n\
+  echo "VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}"\n\
+  echo "VITE_API_URL=${VITE_API_URL:-http://backend:8080}"\n\
+} > /app/.env\n\
+\n\
+echo "✅ .env creado en el contenedor:"\n\
+cat /app/.env\n\
+echo ""\n\
+echo "Iniciando Vite..."\n\
+exec pnpm run dev --host' > /entrypoint.sh && chmod +x /entrypoint.sh
+
+# Comando para iniciar el servidor de desarrollo
+ENTRYPOINT ["/entrypoint.sh"]

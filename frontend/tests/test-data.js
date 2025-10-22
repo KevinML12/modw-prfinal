@@ -62,7 +62,7 @@ export const MOCK_USER_INVALID = {
 // ============================================
 
 /**
- * ⚠️  IMPORTANTE: ACTUALIZAR ESTOS IDS CON PRODUCTOS REALES
+ * IMPORTANTE: ACTUALIZAR ESTOS IDS CON PRODUCTOS REALES
  * 
  * Para obtener IDs de productos reales:
  * 1. docker-compose exec backend sh

@@ -55,7 +55,7 @@ func initGormDB() {
 		dbName := os.Getenv("DB_NAME")
 
 		if dbHost == "" || dbUser == "" || dbName == "" {
-			log.Println("⚠️ ADVERTENCIA: Variables de base de datos no configuradas, GORM deshabilitado")
+			log.Println("ADVERTENCIA: Variables de base de datos no configuradas, GORM deshabilitado")
 			return
 		}
 
@@ -72,11 +72,11 @@ func initGormDB() {
 	var err error
 	GormDB, err = gorm.Open(postgres.Open(dbURL), &gorm.Config{})
 	if err != nil {
-		log.Printf("⚠️ Advertencia: No se pudo conectar a GORM: %v", err)
+		log.Printf("Advertencia: No se pudo conectar a GORM: %v", err)
 		return
 	}
 
-	log.Println("✓ Conexión GORM con PostgreSQL establecida exitosamente.")
+	log.Println("Conexión GORM con PostgreSQL establecida exitosamente.")
 }
 
 // GetGormDB retorna la conexión GORM global

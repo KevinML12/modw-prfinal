@@ -547,7 +547,7 @@ export async function waitForCartSync(page) {
 
   // Si no coinciden, disparar reactividad y esperar sync
   if (storeCount !== uiCount) {
-    console.warn(`⚠️ Desincronización: store=${storeCount}, ui=${uiCount}`);
+    console.warn(`Desincronización: store=${storeCount}, ui=${uiCount}`);
 
     // Disparar reactividad
     await triggerSvelteReactivity(page);

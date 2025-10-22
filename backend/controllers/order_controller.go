@@ -183,3 +183,95 @@ func (oc *OrderController) CreateOrder(c *gin.Context) {
 		"data": order,
 	})
 }
+
+// GetUserOrders - Obtener pedidos del usuario autenticado
+func (oc *OrderController) GetUserOrders(c *gin.Context) {
+	userID, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuario no autenticado"})
+		return
+	}
+
+	var orders []models.Order
+	if err := oc.DB.Where("user_id = ?", userID).
+		Preload("OrderItems").
+		Order("created_at DESC").
+		Find(&orders).Error; err != nil {
+		log.Printf("Error obteniendo pedidos: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error obteniendo pedidos"})
+		return
+	}
+
+	c.JSON(http.StatusOK, orders)
+}
+
+// GetOrderByID - Obtener un pedido específico
+func (oc *OrderController) GetOrderByID(c *gin.Context) {
+	orderID := c.Param("id")
+	userID, exists := c.Get("user_id")
+
+	var order models.Order
+
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuario no autenticado"})
+		return
+	}
+
+	if err := oc.DB.Where("id = ? AND user_id = ?", orderID, userID).
+		Preload("OrderItems").
+		First(&order).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Pedido no encontrado"})
+		return
+	}
+
+	c.JSON(http.StatusOK, order)
+}
+
+// GetAllOrders - ADMIN: Obtener todos los pedidos
+func (oc *OrderController) GetAllOrders(c *gin.Context) {
+	var orders []models.Order
+	if err := oc.DB.
+		Preload("OrderItems").
+		Order("created_at DESC").
+		Find(&orders).Error; err != nil {
+		log.Printf("Error obteniendo todos los pedidos: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error obteniendo pedidos"})
+		return
+	}
+
+	c.JSON(http.StatusOK, orders)
+}
+
+// UpdateOrderStatus - ADMIN: Actualizar estado de un pedido
+func (oc *OrderController) UpdateOrderStatus(c *gin.Context) {
+	orderID := c.Param("id")
+
+	var input struct {
+		Status string `json:"status" binding:"required,oneof=pending paid shipped delivered cancelled"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var order models.Order
+	if err := oc.DB.First(&order, orderID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Pedido no encontrado"})
+		return
+	}
+
+	order.Status = models.OrderStatus(input.Status)
+
+	if err := oc.DB.Save(&order).Error; err != nil {
+		log.Printf("Error actualizando estado del pedido: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error actualizando pedido"})
+		return
+	}
+
+	log.Printf("Estado del pedido %s actualizado a %s", orderID, input.Status)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Estado actualizado",
+		"order":   order,
+	})
+}

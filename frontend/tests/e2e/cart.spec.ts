@@ -60,7 +60,7 @@ test.describe('Carrito de Compras (SVELTE-AWARE)', () => {
       await navigateToProduct(page, TEST_PRODUCT_IDS[0]);
       await addToCart(page, 2);
     } catch (error) {
-      console.warn('⚠️ Fallo agregar producto en beforeEach:', error.message);
+      console.warn('Fallo agregar producto en beforeEach:', error.message);
       // Continuar de todas formas
     }
 
@@ -505,7 +505,7 @@ test.describe('Carrito de Compras (SVELTE-AWARE)', () => {
       expect(uiCount).toBe(2);
     } catch (error) {
       console.warn(
-        '⚠️ Fallo agregar segundo producto:',
+        'Fallo agregar segundo producto:',
         error.message
       );
       // Este test requiere 2 productos diferentes en la DB

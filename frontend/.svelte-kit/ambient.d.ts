@@ -26,6 +26,9 @@
  * ```
  */
 declare module '$env/static/private' {
+	export const VITE_SUPABASE_URL: string;
+	export const VITE_SUPABASE_ANON_KEY: string;
+	export const VITE_API_URL: string;
 	export const npm_config_user_agent: string;
 	export const NODE_VERSION: string;
 	export const HOSTNAME: string;
@@ -37,7 +40,6 @@ declare module '$env/static/private' {
 	export const COREPACK_ROOT: string;
 	export const COREPACK_ENABLE_DOWNLOAD_PROMPT: string;
 	export const pnpm_config_verify_deps_before_run: string;
-	export const _: string;
 	export const npm_config_registry: string;
 	export const npm_config_node_gyp: string;
 	export const PATH: string;
@@ -86,6 +88,9 @@ declare module '$env/static/public' {
  */
 declare module '$env/dynamic/private' {
 	export const env: {
+		VITE_SUPABASE_URL: string;
+		VITE_SUPABASE_ANON_KEY: string;
+		VITE_API_URL: string;
 		npm_config_user_agent: string;
 		NODE_VERSION: string;
 		HOSTNAME: string;
@@ -97,7 +102,6 @@ declare module '$env/dynamic/private' {
 		COREPACK_ROOT: string;
 		COREPACK_ENABLE_DOWNLOAD_PROMPT: string;
 		pnpm_config_verify_deps_before_run: string;
-		_: string;
 		npm_config_registry: string;
 		npm_config_node_gyp: string;
 		PATH: string;
