@@ -5,11 +5,12 @@ import (
 	"net/http"
 	"os"
 
+	"moda-organica/backend/db"
+	"moda-organica/backend/models"
+
 	"github.com/gin-gonic/gin"
 	"github.com/stripe/stripe-go/v78"
 	"github.com/stripe/stripe-go/v78/checkout/session"
-	"moda-organica/backend/db"
-	"moda-organica/backend/models"
 )
 
 // PaymentController maneja las operaciones de pago con Stripe
