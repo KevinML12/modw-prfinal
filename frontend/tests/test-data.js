@@ -232,3 +232,81 @@ export async function getCartCount(page) {
     return 0;
   }
 }
+
+// ============================================
+// STRIPE TEST DATA
+// ============================================
+/**
+ * Constantes para tests del flujo de pago con Stripe.
+ * Incluye session IDs de prueba, URLs y datos de tarjetas test.
+ */
+export const STRIPE_TEST_DATA = {
+  /**
+   * Session IDs mock para tests
+   */
+  sessionIds: {
+    success: 'cs_test_mock_success_123456789',
+    cancel: 'cs_test_mock_cancel_987654321',
+    expired: 'cs_test_mock_expired_111111111',
+  },
+
+  /**
+   * URLs de Stripe para validaciones
+   */
+  urls: {
+    checkoutBase: 'https://checkout.stripe.com',
+    successPath: '/checkout/success',
+    cancelPath: '/checkout/cancel',
+  },
+
+  /**
+   * Mock de respuesta del backend para create-checkout-session
+   */
+  mockCheckoutSession: {
+    checkout_url: 'https://checkout.stripe.com/c/pay/cs_test_mock123',
+    session_id: 'cs_test_mock123',
+    order_id: 1
+  },
+
+  /**
+   * Tarjeta de prueba de Stripe (para tests manuales)
+   *
+   * NOTA: Esta tarjeta NO se usa en tests E2E automatizados
+   * porque no podemos completar el pago en Stripe durante CI/CD.
+   *
+   * Usar solo para validación manual.
+   */
+  testCard: {
+    number: '4242424242424242',
+    expiry: '12/34',
+    cvc: '123',
+    zip: '12345',
+    description: 'Tarjeta de prueba de Stripe (always succeeds)'
+  },
+
+  /**
+   * Tarjetas de prueba adicionales (para casos edge)
+   */
+  testCardsEdgeCases: {
+    declined: {
+      number: '4000000000000002',
+      description: 'Card declined'
+    },
+    insufficientFunds: {
+      number: '4000000000009995',
+      description: 'Insufficient funds'
+    },
+    requiresAuthentication: {
+      number: '4000002500003155',
+      description: 'Requires 3D Secure authentication'
+    }
+  },
+
+  /**
+   * Patterns regex para validaciones
+   */
+  patterns: {
+    sessionId: /^cs_test_[a-zA-Z0-9]+$/,
+    checkoutUrl: /^https:\/\/checkout\.stripe\.com/,
+  }
+};

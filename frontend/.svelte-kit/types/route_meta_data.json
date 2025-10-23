@@ -3,6 +3,8 @@
 		"src/routes/+page.js"
 	],
 	"/checkout": [],
+	"/checkout/cancel": [],
+	"/checkout/success": [],
 	"/login": [],
 	"/orders": [],
 	"/product/[id]": [

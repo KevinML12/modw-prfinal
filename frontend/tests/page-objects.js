@@ -10,7 +10,7 @@
  */
 
 import { expect } from '@playwright/test';
-import { TIMEOUTS, SELECTORS } from './test-data.js';
+import { TIMEOUTS, SELECTORS, BASE_URLS } from './test-data.js';
 import {
   waitForSvelteKitHydration,
   waitForSvelteTransition,
@@ -560,5 +560,106 @@ export async function waitForCartSync(page) {
       return count === storeCount;
     }, { timeout: TIMEOUTS.MEDIUM });
   }
+}
+
+/**
+ * Completa el flujo de checkout completo y maneja redirección a Stripe
+ * 
+ * Helper de alto nivel que:
+ * 1. Llena formulario de checkout
+ * 2. Hace submit
+ * 3. Espera redirección (Stripe o success/cancel)
+ * 4. Retorna información del resultado
+ * 
+ * @param {import('@playwright/test').Page} page
+ * @param {Object} userData - Datos del usuario para el formulario
+ * @returns {Promise<{url: string, isStripe: boolean, isSuccess: boolean, isCancel: boolean}>}
+ * 
+ * @example
+ * const result = await completeCheckoutFlow(page, MOCK_USER);
+ * if (result.isStripe) {
+ *   console.log('Redirigió a Stripe');
+ * }
+ */
+export async function completeCheckoutFlow(page, userData) {
+  // 1. Llenar formulario
+  await fillCheckoutForm(page, userData);
+  
+  // 2. Click submit
+  const submitBtn = page.locator(SELECTORS.submitOrder);
+  await submitBtn.click();
+  
+  // 3. Esperar redirección (puede ser a Stripe, success o cancel)
+  try {
+    await page.waitForURL(/checkout\.stripe\.com|\/checkout\/(success|cancel)/, {
+      timeout: 10000
+    });
+  } catch (error) {
+    console.warn('No redirigió en el timeout esperado:', error.message);
+  }
+  
+  // 4. Analizar resultado
+  const currentUrl = page.url();
+  
+  return {
+    url: currentUrl,
+    isStripe: currentUrl.includes('stripe.com'),
+    isSuccess: currentUrl.includes('/checkout/success'),
+    isCancel: currentUrl.includes('/checkout/cancel')
+  };
+}
+
+/**
+ * Simula vuelta exitosa de Stripe Checkout
+ * 
+ * Helper para tests que necesitan simular que el usuario
+ * completó el pago en Stripe y vuelve a la página de éxito.
+ * 
+ * @param {import('@playwright/test').Page} page
+ * @param {string} sessionId - Session ID de Stripe (opcional, usa mock por defecto)
+ * @returns {Promise<void>}
+ * 
+ * @example
+ * await simulateStripeSuccess(page, 'cs_test_custom_session_id');
+ * // O usar el mock por defecto:
+ * await simulateStripeSuccess(page);
+ */
+export async function simulateStripeSuccess(page, sessionId = 'cs_test_mock_success_123456789') {
+  // 1. Navegar directamente a success con session_id
+  await page.goto(`${BASE_URLS.frontend}/checkout/success?session_id=${sessionId}`);
+  
+  // 2. Esperar hydration de SvelteKit
+  await waitForSvelteKitHydration(page);
+  
+  // 3. Esperar que la página cargue completamente
+  await page.waitForLoadState('networkidle');
+  
+  // 4. Dar tiempo para que el store se actualice (limpieza de carrito)
+  await page.waitForTimeout(500);
+}
+
+/**
+ * Simula cancelación de pago en Stripe
+ * 
+ * Helper para tests que necesitan simular que el usuario
+ * canceló el pago en Stripe y vuelve a la página de cancelación.
+ * 
+ * @param {import('@playwright/test').Page} page
+ * @returns {Promise<void>}
+ * 
+ * @example
+ * await simulateStripeCancel(page);
+ * const cart = await getCartFromStore(page);
+ * expect(cart.items.length).toBeGreaterThan(0); // Carrito NO se vació
+ */
+export async function simulateStripeCancel(page) {
+  // 1. Navegar directamente a cancel
+  await page.goto(`${BASE_URLS.frontend}/checkout/cancel`);
+  
+  // 2. Esperar hydration de SvelteKit
+  await waitForSvelteKitHydration(page);
+  
+  // 3. Esperar que la página cargue completamente
+  await page.waitForLoadState('networkidle');
 }
 
