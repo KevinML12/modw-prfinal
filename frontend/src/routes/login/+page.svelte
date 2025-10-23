@@ -66,7 +66,7 @@
 						</div>
 					</div>
 					<div class="flex items-start gap-3 p-4 bg-bg-card dark:bg-dark-bg-card rounded-lg">
-						<span class="text-2xl">⚡</span>
+						<span class="text-2xl"></span>
 						<div>
 							<h4 class="font-semibold text-text-primary dark:text-dark-text-primary mb-1">
 								Checkout más rápido

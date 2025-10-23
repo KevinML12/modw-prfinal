@@ -101,30 +101,68 @@
 		return errors;
 	}
 
-	// Manejador del formulario (aquí irá la lógica de pago)
-	function handleSubmit() {
-		// Validar primero
-		const errors = validateForm();
+	// Manejador del formulario - Procesar checkout con Stripe
+	async function handleSubmit(e) {
+		e.preventDefault();
 
+		// Validar formulario
+		const errors = validateForm();
 		if (errors.length > 0) {
 			alert('Por favor corrige los siguientes errores:\n\n' + errors.join('\n'));
 			return;
 		}
 
-		console.log('Enviando pedido válido:');
+		// Preparar payload para backend
 		const orderPayload = {
-			customer: { email, fullName, phone },
-			shipping: shippingLocation,
-			items: currentCart.items,
-			shippingCost,
-			total,
+			customer_email: email,
+			customer_name: fullName,
+			customer_phone: phone,
+			shipping_address: {
+				department: shippingLocation.department,
+				municipality: shippingLocation.municipality,
+				address: shippingLocation.address
+			},
+			items: currentCart.items.map(item => ({
+				product_id: item.id,
+				name: item.name,
+				price: item.price,
+				quantity: item.quantity,
+				image_url: item.image_url || ''
+			})),
+			subtotal: currentCart.subtotal,
+			shipping_cost: shippingCost,
+			total: total
 		};
-		console.log(JSON.stringify(orderPayload, null, 2));
-		// TODO:
-		// 1. Llamar al endpoint de 'create-payment-intent' en nuestro backend de Go
-		// 2. Usar Stripe.js para confirmar el pago
-		// 3. Si es exitoso, redirigir a la página de "gracias"
-		alert('¡Pedido enviado exitosamente! Ahora procede al pago con Stripe.');
+
+		console.log('Creando sesión de checkout:', orderPayload);
+
+		try {
+			// Llamar al backend para crear Checkout Session
+			const response = await fetch('/api/v1/payments/create-checkout-session', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(orderPayload)
+			});
+
+			if (!response.ok) {
+				const errorData = await response.json();
+				throw new Error(errorData.error || 'Error al crear sesión de pago');
+			}
+
+			const data = await response.json();
+
+			console.log('Sesión creada:', data);
+			console.log('Redirigiendo a Stripe Checkout...');
+
+			// Redirigir a Stripe Checkout
+			window.location.href = data.checkout_url;
+
+		} catch (error) {
+			console.error('Error al procesar pago:', error);
+			alert('Error al procesar el pago: ' + error.message + '\n\nPor favor intenta nuevamente.');
+		}
 	}
 </script>
 

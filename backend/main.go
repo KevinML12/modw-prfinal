@@ -57,6 +57,9 @@ func main() {
 		log.Println("Advertencia: GORM no está disponible, OrderController no inicializado")
 	}
 
+	// Instancia el controlador de pagos
+	paymentController := &controllers.PaymentController{}
+
 	// Define las rutas de la API v1
 	apiV1 := router.Group("/api/v1")
 	{
@@ -74,6 +77,13 @@ func main() {
 		if orderController != nil {
 			apiV1.POST("/orders", orderController.CreateOrder)
 			log.Println("Endpoint POST /api/v1/orders registrado exitosamente")
+		}
+
+		// Rutas para pagos con Stripe
+		payments := apiV1.Group("/payments")
+		{
+			payments.POST("/create-checkout-session", paymentController.CreateCheckoutSession)
+			log.Println("Endpoint POST /api/v1/payments/create-checkout-session registrado exitosamente")
 		}
 	}
 

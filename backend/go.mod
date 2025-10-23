@@ -8,6 +8,7 @@ require (
 	github.com/go-playground/validator/v10 v10.28.0
 	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
+	github.com/stripe/stripe-go/v78 v78.12.0
 	github.com/supabase-community/supabase-go v0.0.4
 	golang.org/x/text v0.30.0
 	gorm.io/driver/postgres v1.6.0
@@ -56,6 +57,4 @@ require (
 	golang.org/x/sys v0.37.0 // indirect
 	golang.org/x/tools v0.38.0 // indirect
 	google.golang.org/protobuf v1.36.10 // indirect
-	gorm.io/driver/postgres v1.6.0
 )
-
