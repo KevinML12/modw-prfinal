@@ -26,39 +26,59 @@
  * ```
  */
 declare module '$env/static/private' {
-	export const VITE_SUPABASE_URL: string;
-	export const VITE_SUPABASE_ANON_KEY: string;
-	export const VITE_API_URL: string;
+	export const BASE_URL: string;
+	export const SUPABASE_URL: string;
+	export const CARGO_EXPRESO_SENDER_ADDRESS: string;
 	export const npm_config_user_agent: string;
 	export const NODE_VERSION: string;
 	export const HOSTNAME: string;
 	export const YARN_VERSION: string;
 	export const npm_node_execpath: string;
+	export const SUPABASE_JWT_SECRET: string;
 	export const SHLVL: string;
 	export const HOME: string;
+	export const CARGO_EXPRESO_SENDER_NAME: string;
 	export const npm_package_json: string;
 	export const COREPACK_ROOT: string;
+	export const OLLAMA_URL: string;
 	export const COREPACK_ENABLE_DOWNLOAD_PROMPT: string;
 	export const pnpm_config_verify_deps_before_run: string;
+	export const _: string;
+	export const CARGO_EXPRESO_SENDER_PHONE: string;
+	export const CARGO_EXPRESO_MOCK: string;
 	export const npm_config_registry: string;
 	export const npm_config_node_gyp: string;
 	export const PATH: string;
+	export const VITE_SUPABASE_ANON_KEY: string;
 	export const npm_package_name: string;
 	export const npm_config_store_dir: string;
 	export const NODE: string;
 	export const npm_config_frozen_lockfile: string;
+	export const MEILI_HOST: string;
+	export const STRIPE_SECRET_KEY: string;
 	export const npm_lifecycle_script: string;
+	export const VITE_SUPABASE_URL: string;
+	export const MEILI_MASTER_KEY: string;
 	export const npm_package_version: string;
 	export const npm_lifecycle_event: string;
 	export const npm_config_verify_deps_before_run: string;
 	export const NODE_PATH: string;
+	export const SUPABASE_SERVICE_KEY: string;
+	export const STRIPE_PUBLISHABLE_KEY: string;
+	export const CARGO_EXPRESO_SENDER_CITY: string;
+	export const GIN_MODE: string;
+	export const VITE_GOOGLE_MAPS_API_KEY: string;
+	export const SERVER_API_URL: string;
 	export const PWD: string;
 	export const npm_execpath: string;
 	export const npm_config__jsr_registry: string;
 	export const npm_command: string;
 	export const PNPM_SCRIPT_SRC_DIR: string;
-	export const INIT_CWD: string;
+	export const API_URL: string;
 	export const NODE_ENV: string;
+	export const FRONTEND_URL: string;
+	export const VITE_API_URL: string;
+	export const INIT_CWD: string;
 }
 
 /**
@@ -88,39 +108,59 @@ declare module '$env/static/public' {
  */
 declare module '$env/dynamic/private' {
 	export const env: {
-		VITE_SUPABASE_URL: string;
-		VITE_SUPABASE_ANON_KEY: string;
-		VITE_API_URL: string;
+		BASE_URL: string;
+		SUPABASE_URL: string;
+		CARGO_EXPRESO_SENDER_ADDRESS: string;
 		npm_config_user_agent: string;
 		NODE_VERSION: string;
 		HOSTNAME: string;
 		YARN_VERSION: string;
 		npm_node_execpath: string;
+		SUPABASE_JWT_SECRET: string;
 		SHLVL: string;
 		HOME: string;
+		CARGO_EXPRESO_SENDER_NAME: string;
 		npm_package_json: string;
 		COREPACK_ROOT: string;
+		OLLAMA_URL: string;
 		COREPACK_ENABLE_DOWNLOAD_PROMPT: string;
 		pnpm_config_verify_deps_before_run: string;
+		_: string;
+		CARGO_EXPRESO_SENDER_PHONE: string;
+		CARGO_EXPRESO_MOCK: string;
 		npm_config_registry: string;
 		npm_config_node_gyp: string;
 		PATH: string;
+		VITE_SUPABASE_ANON_KEY: string;
 		npm_package_name: string;
 		npm_config_store_dir: string;
 		NODE: string;
 		npm_config_frozen_lockfile: string;
+		MEILI_HOST: string;
+		STRIPE_SECRET_KEY: string;
 		npm_lifecycle_script: string;
+		VITE_SUPABASE_URL: string;
+		MEILI_MASTER_KEY: string;
 		npm_package_version: string;
 		npm_lifecycle_event: string;
 		npm_config_verify_deps_before_run: string;
 		NODE_PATH: string;
+		SUPABASE_SERVICE_KEY: string;
+		STRIPE_PUBLISHABLE_KEY: string;
+		CARGO_EXPRESO_SENDER_CITY: string;
+		GIN_MODE: string;
+		VITE_GOOGLE_MAPS_API_KEY: string;
+		SERVER_API_URL: string;
 		PWD: string;
 		npm_execpath: string;
 		npm_config__jsr_registry: string;
 		npm_command: string;
 		PNPM_SCRIPT_SRC_DIR: string;
-		INIT_CWD: string;
+		API_URL: string;
 		NODE_ENV: string;
+		FRONTEND_URL: string;
+		VITE_API_URL: string;
+		INIT_CWD: string;
 		[key: `PUBLIC_${string}`]: undefined;
 		[key: `${string}`]: string | undefined;
 	}

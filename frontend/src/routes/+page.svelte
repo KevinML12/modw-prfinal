@@ -110,7 +110,7 @@
     <!-- Feature 2 -->
     <div class="bg-pale-pink dark:bg-dark-bg-card rounded-2xl p-8 hover:bg-rose-light dark:hover:bg-dark-bg-card-hover transition-all duration-300 hover:scale-[1.02] hover:shadow-soft dark:hover:shadow-[0_0_15px_rgba(255,92,173,0.3)]">
       <div class="w-14 h-14 bg-primary-purple/20 dark:bg-dark-purple/20 rounded-xl flex items-center justify-center mb-4">
-        <span class="text-2xl">🍃</span>
+        <span class="text-2xl"></span>
       </div>
       <h3 class="font-bold text-text-primary dark:text-dark-text-primary text-lg mb-2">Materiales Sostenibles</h3>
       <p class="text-primary-magenta dark:text-dark-magenta text-sm leading-relaxed">

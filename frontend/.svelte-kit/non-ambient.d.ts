@@ -27,12 +27,15 @@ export {};
 
 declare module "$app/types" {
 	export interface AppTypes {
-		RouteId(): "/" | "/checkout" | "/checkout/cancel" | "/checkout/success" | "/login" | "/orders" | "/product" | "/product/[id]" | "/register" | "/test-auth";
+		RouteId(): "/" | "/admin" | "/admin/inventory" | "/admin/orders" | "/checkout" | "/checkout/cancel" | "/checkout/success" | "/login" | "/orders" | "/product" | "/product/[id]" | "/register" | "/test-auth";
 		RouteParams(): {
 			"/product/[id]": { id: string }
 		};
 		LayoutParams(): {
 			"/": { id?: string };
+			"/admin": Record<string, never>;
+			"/admin/inventory": Record<string, never>;
+			"/admin/orders": Record<string, never>;
 			"/checkout": Record<string, never>;
 			"/checkout/cancel": Record<string, never>;
 			"/checkout/success": Record<string, never>;
@@ -43,7 +46,7 @@ declare module "$app/types" {
 			"/register": Record<string, never>;
 			"/test-auth": Record<string, never>
 		};
-		Pathname(): "/" | "/checkout" | "/checkout/" | "/checkout/cancel" | "/checkout/cancel/" | "/checkout/success" | "/checkout/success/" | "/login" | "/login/" | "/orders" | "/orders/" | "/product" | "/product/" | `/product/${string}` & {} | `/product/${string}/` & {} | "/register" | "/register/" | "/test-auth" | "/test-auth/";
+		Pathname(): "/" | "/admin" | "/admin/" | "/admin/inventory" | "/admin/inventory/" | "/admin/orders" | "/admin/orders/" | "/checkout" | "/checkout/" | "/checkout/cancel" | "/checkout/cancel/" | "/checkout/success" | "/checkout/success/" | "/login" | "/login/" | "/orders" | "/orders/" | "/product" | "/product/" | `/product/${string}` & {} | `/product/${string}/` & {} | "/register" | "/register/" | "/test-auth" | "/test-auth/";
 		ResolvedPathname(): `${"" | `/${string}`}${ReturnType<AppTypes['Pathname']>}`;
 		Asset(): "/icons/android-chrome-192x192.png" | "/icons/android-chrome-512x512.png" | "/icons/apple-touch-icon.png" | "/icons/favicon-16x16.png" | "/icons/favicon-32x32.png" | "/icons/favicon.ico" | "/manifest.json" | string & {};
 	}

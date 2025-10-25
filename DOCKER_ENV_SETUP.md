@@ -118,6 +118,8 @@ frontend:
   environment:
     VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
     VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
+    VITE_API_URL: http://backend:8080
+    VITE_GOOGLE_MAPS_API_KEY: ${VITE_GOOGLE_MAPS_API_KEY}
 ```
 
 **Función:** Lee variables del `.env` del host y las pasa al contenedor.

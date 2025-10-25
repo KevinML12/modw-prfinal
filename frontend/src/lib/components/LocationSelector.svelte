@@ -227,7 +227,7 @@
       id="address"
       bind:value={addressText}
       onblur={validateAddress}
-      on:input={validateAddress}
+      oninput={validateAddress}
       {disabled}
       placeholder="Ej: Calle Principal 123, Apto 4, zona 1..."
       rows="3"

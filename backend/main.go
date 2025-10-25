@@ -10,6 +10,7 @@ import (
 
 	"moda-organica/backend/controllers"
 	"moda-organica/backend/db"
+	"moda-organica/backend/middleware"
 	"moda-organica/backend/models"
 )
 
@@ -37,13 +38,22 @@ func main() {
 
 	// Configuración CORS
 	config := cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:4173"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:4173", "http://127.0.0.1:5173"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "Accept"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	}
 	router.Use(cors.New(config))
+
+	// Health check - endpoint público para verificar que el backend está corriendo
+	router.GET("/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"status":  "ok",
+			"message": "Backend is running",
+			"version": "1.0",
+		})
+	})
 
 	// Instancia el controlador de productos
 	pc := controllers.NewProductController()
@@ -57,8 +67,8 @@ func main() {
 		log.Println("Advertencia: GORM no está disponible, OrderController no inicializado")
 	}
 
-	// Instancia el controlador de pagos
-	paymentController := &controllers.PaymentController{}
+	// Instancia el controlador de pagos con inyección de dependencias
+	paymentController := controllers.NewPaymentController()
 
 	// Define las rutas de la API v1
 	apiV1 := router.Group("/api/v1")
@@ -85,6 +95,18 @@ func main() {
 			payments.POST("/create-checkout-session", paymentController.CreateCheckoutSession)
 			log.Println("Endpoint POST /api/v1/payments/create-checkout-session registrado exitosamente")
 		}
+	}
+
+	// ===== RUTAS DE ADMINISTRACIÓN (PROTEGIDAS) =====
+	admin := apiV1.Group("/admin")
+	admin.Use(middleware.AdminAuthMiddleware())
+	{
+		// Gestión de Órdenes
+		admin.GET("/orders", orderController.AdminGetOrders)
+		admin.GET("/orders/:id", orderController.AdminGetOrderByID)
+		admin.GET("/orders/stats", orderController.AdminGetOrdersStats)
+		admin.GET("/orders/map", orderController.AdminGetOrdersMap)
+		log.Println("Rutas de administración de órdenes registradas exitosamente")
 	}
 
 	// Inicia el servidor

@@ -1,45 +1,42 @@
-# Usamos una imagen de Node que ya incluye pnpm
+# ============================================
+# Dockerfile.dev - Frontend (SvelteKit)
+# Proyecto: Moda Orgánica (Vibe Coders)
+# ============================================
+# 
+# Propósito:
+# - Entorno de desarrollo con hot-reload
+# - Compatible con variables de entorno desde docker-compose
+# - NO genera .env interno (usa env_file de docker-compose)
+# 
+# Arquitectura Metamórfica:
+# - Reutilizable para cualquier proyecto SvelteKit
+# - Configuración externalizada vía variables de entorno
+# ============================================
+
+# Usar imagen de Node con pnpm incluido
 FROM node:18-slim
 
-# Activamos pnpm
+# Activar pnpm (viene incluido en corepack)
 RUN corepack enable
 
-# Establecemos el directorio de trabajo
+# Establecer directorio de trabajo
 WORKDIR /app
 
-# Configuramos pnpm store location ANTES de instalar
+# Configurar pnpm store location
 RUN pnpm config set store-dir /app/.pnpm-store
 
-# Copiamos package.json primero
+# Copiar archivos de dependencias
 COPY package.json ./
-
-# Copiamos pnpm-lock.yaml si existe (opcional)
 COPY pnpm-lock.yaml* ./
-
-# Copiamos .npmrc si existe
 COPY .npmrc* ./
 
-# Instalamos las dependencias
-# Si no hay lock file, pnpm lo generará
+# Instalar dependencias
+# Si no existe lock file, pnpm lo generará
 RUN pnpm install
 
-# Exponemos el puerto del servidor de desarrollo de Vite
+# Exponer puerto de Vite dev server
 EXPOSE 5173
 
-# Crear un entrypoint script que genere .env desde variables de entorno
-RUN echo '#!/bin/bash\n\
-echo "Generando .env desde variables de entorno..."\n\
-{\n\
-  echo "VITE_SUPABASE_URL=${VITE_SUPABASE_URL}"\n\
-  echo "VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}"\n\
-  echo "VITE_API_URL=${VITE_API_URL:-http://backend:8080}"\n\
-} > /app/.env\n\
-\n\
-echo "✅ .env creado en el contenedor:"\n\
-cat /app/.env\n\
-echo ""\n\
-echo "Iniciando Vite..."\n\
-exec pnpm run dev --host' > /entrypoint.sh && chmod +x /entrypoint.sh
-
-# Comando para iniciar el servidor de desarrollo
-ENTRYPOINT ["/entrypoint.sh"]
+# Comando para iniciar servidor de desarrollo
+# Las variables VITE_* se inyectan desde docker-compose.yml
+CMD ["pnpm", "run", "dev", "--host"]

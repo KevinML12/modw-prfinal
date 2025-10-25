@@ -6,7 +6,6 @@ import {
   waitForStoreUpdate,
   triggerSvelteReactivity,
   getCartFromStore,
-  waitForCartSync,
   DEFAULT_SVELTE_TIMEOUTS,
 } from '../helpers/svelte-helpers.js';
 import {
@@ -17,6 +16,7 @@ import {
   getCartCount,
   removeFromCart,
   getTotalPrice,
+  waitForCartSync,
 } from '../page-objects.js';
 import {
   BASE_URLS,

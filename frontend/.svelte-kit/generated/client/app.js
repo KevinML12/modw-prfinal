@@ -14,21 +14,28 @@ export const nodes = [
 	() => import('./nodes/7'),
 	() => import('./nodes/8'),
 	() => import('./nodes/9'),
-	() => import('./nodes/10')
+	() => import('./nodes/10'),
+	() => import('./nodes/11'),
+	() => import('./nodes/12'),
+	() => import('./nodes/13'),
+	() => import('./nodes/14')
 ];
 
 export const server_loads = [];
 
 export const dictionary = {
-		"/": [2],
-		"/checkout": [3],
-		"/checkout/cancel": [4],
-		"/checkout/success": [5],
-		"/login": [6],
-		"/orders": [7],
-		"/product/[id]": [8],
-		"/register": [9],
-		"/test-auth": [10]
+		"/": [3],
+		"/admin": [4,[2]],
+		"/admin/inventory": [5,[2]],
+		"/admin/orders": [6,[2]],
+		"/checkout": [7],
+		"/checkout/cancel": [8],
+		"/checkout/success": [9],
+		"/login": [10],
+		"/orders": [11],
+		"/product/[id]": [12],
+		"/register": [13],
+		"/test-auth": [14]
 	};
 
 export const hooks = {
@@ -44,4 +51,4 @@ export const hash = false;
 
 export const decode = (type, value) => decoders[type](value);
 
-export { default as root } from '../root.svelte';
+export { default as root } from '../root.js';

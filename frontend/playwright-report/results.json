@@ -1,7 +1,7 @@
 {
   "config": {
-    "configFile": "/app/playwright.config.ts",
-    "rootDir": "/app/tests/e2e",
+    "configFile": "C:\\Users\\keyme\\proyectos\\moda-organica\\frontend\\playwright.config.ts",
+    "rootDir": "C:/Users/keyme/proyectos/moda-organica/frontend/tests/e2e",
     "forbidOnly": false,
     "fullyParallel": false,
     "globalSetup": null,
@@ -38,13 +38,13 @@
     "quiet": false,
     "projects": [
       {
-        "outputDir": "/app/test-results",
+        "outputDir": "C:/Users/keyme/proyectos/moda-organica/frontend/test-results",
         "repeatEach": 1,
-        "retries": 2,
+        "retries": 1,
         "metadata": {},
         "id": "chromium",
         "name": "chromium",
-        "testDir": "/app/tests/e2e",
+        "testDir": "C:/Users/keyme/proyectos/moda-organica/frontend/tests/e2e",
         "testIgnore": [],
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
@@ -59,22 +59,448 @@
     "workers": 1,
     "webServer": null
   },
-  "suites": [],
-  "errors": [
+  "suites": [
     {
-      "message": "SyntaxError: The requested module '../helpers/svelte-helpers.js' does not provide an export named 'waitForCartSync'",
-      "stack": "SyntaxError: The requested module '../helpers/svelte-helpers.js' does not provide an export named 'waitForCartSync'"
+      "title": "checkout.spec.ts",
+      "file": "checkout.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Flujo de Checkout (SVELTE-AWARE)",
+          "file": "checkout.spec.ts",
+          "line": 43,
+          "column": 6,
+          "specs": [
+            {
+              "title": "debe mostrar el formulario de checkout con campos requeridos",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "25ab1bfc84c57e3e3a45-b41fc0d94ce966f5bbca",
+              "file": "checkout.spec.ts",
+              "line": 96,
+              "column": 3
+            },
+            {
+              "title": "debe mostrar resumen del pedido con productos y total",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "25ab1bfc84c57e3e3a45-404e69c22a62e60b01c3",
+              "file": "checkout.spec.ts",
+              "line": 148,
+              "column": 3
+            },
+            {
+              "title": "debe validar campos obligatorios",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "25ab1bfc84c57e3e3a45-e2d835cbc02f517584c1",
+              "file": "checkout.spec.ts",
+              "line": 199,
+              "column": 3
+            },
+            {
+              "title": "debe validar email en el formulario",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "25ab1bfc84c57e3e3a45-3fd9cebb5735e12cd667",
+              "file": "checkout.spec.ts",
+              "line": 251,
+              "column": 3
+            },
+            {
+              "title": "debe permitir navegar desde el carrito a checkout",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "25ab1bfc84c57e3e3a45-d7e07bb7043d07874fe3",
+              "file": "checkout.spec.ts",
+              "line": 294,
+              "column": 3
+            },
+            {
+              "title": "debe completar el checkout y redirigir a Stripe",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "25ab1bfc84c57e3e3a45-6b27a8939097a7bc65e2",
+              "file": "checkout.spec.ts",
+              "line": 321,
+              "column": 3
+            },
+            {
+              "title": "debe deshabilitar botón de submit durante procesamiento",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "25ab1bfc84c57e3e3a45-e9eb4b620a260dafe5d5",
+              "file": "checkout.spec.ts",
+              "line": 415,
+              "column": 3
+            },
+            {
+              "title": "debe mantener carrito si checkout falla",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "25ab1bfc84c57e3e3a45-e0ddd5fd7ebc3e1811a7",
+              "file": "checkout.spec.ts",
+              "line": 453,
+              "column": 3
+            },
+            {
+              "title": "debe redirigir a home si intentas acceder con carrito vacío",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "25ab1bfc84c57e3e3a45-aec1c600288b5cd51344",
+              "file": "checkout.spec.ts",
+              "line": 476,
+              "column": 3
+            },
+            {
+              "title": "debe actualizar resumen si el carrito cambia",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "25ab1bfc84c57e3e3a45-0bb6f5d3e0c7115945c8",
+              "file": "checkout.spec.ts",
+              "line": 516,
+              "column": 3
+            },
+            {
+              "title": "debe mostrar moneda en GTQ en el checkout",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "25ab1bfc84c57e3e3a45-eb88fb51e00b251ac103",
+              "file": "checkout.spec.ts",
+              "line": 558,
+              "column": 3
+            },
+            {
+              "title": "debe preservar carrito si recarga la página durante checkout",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "25ab1bfc84c57e3e3a45-16fb06b984a0da5bf2c3",
+              "file": "checkout.spec.ts",
+              "line": 581,
+              "column": 3
+            },
+            {
+              "title": "debe completar checkout con múltiples items diferentes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "25ab1bfc84c57e3e3a45-5349ae986cc30cdf87bc",
+              "file": "checkout.spec.ts",
+              "line": 604,
+              "column": 3
+            }
+          ]
+        }
+      ]
     },
     {
-      "message": "SyntaxError: The requested module '../page-objects.js' does not provide an export named 'getCartFromStore'",
-      "stack": "SyntaxError: The requested module '../page-objects.js' does not provide an export named 'getCartFromStore'"
+      "title": "payment.spec.ts",
+      "file": "payment.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Stripe Payment Flow",
+          "file": "payment.spec.ts",
+          "line": 38,
+          "column": 6,
+          "specs": [
+            {
+              "title": "debe crear checkout session al enviar formulario válido",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3e7ba30b94d7e035fc14-aea2d3c62391a3696c62",
+              "file": "payment.spec.ts",
+              "line": 88,
+              "column": 3
+            },
+            {
+              "title": "debe redirigir a Stripe Checkout después del submit",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3e7ba30b94d7e035fc14-77f3c43835a3f4d4b68a",
+              "file": "payment.spec.ts",
+              "line": 144,
+              "column": 3
+            },
+            {
+              "title": "debe mostrar confirmación de pago exitoso",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3e7ba30b94d7e035fc14-a0ecb79bac8b65d73335",
+              "file": "payment.spec.ts",
+              "line": 183,
+              "column": 3
+            },
+            {
+              "title": "debe mostrar página de cancelación si se abandona el pago",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3e7ba30b94d7e035fc14-de3422380881ab9218bf",
+              "file": "payment.spec.ts",
+              "line": 220,
+              "column": 3
+            },
+            {
+              "title": "debe limpiar carrito solo en success, no en cancel",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3e7ba30b94d7e035fc14-3763878b6b0a3ecc3761",
+              "file": "payment.spec.ts",
+              "line": 264,
+              "column": 3
+            },
+            {
+              "title": "debe requerir session_id en la página de éxito",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3e7ba30b94d7e035fc14-821bfa0e3a490d00df51",
+              "file": "payment.spec.ts",
+              "line": 305,
+              "column": 3
+            },
+            {
+              "title": "debe crear sesión con múltiples productos",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3e7ba30b94d7e035fc14-4e987a34c5d4df14435e",
+              "file": "payment.spec.ts",
+              "line": 338,
+              "column": 3
+            }
+          ]
+        }
+      ]
     }
   ],
+  "errors": [],
   "stats": {
-    "startTime": "2025-10-23T06:06:29.506Z",
-    "duration": 427.13599999999997,
+    "startTime": "2025-10-23T06:38:26.767Z",
+    "duration": 364.51099999999997,
     "expected": 0,
-    "skipped": 0,
+    "skipped": 20,
     "unexpected": 0,
     "flaky": 0
   }

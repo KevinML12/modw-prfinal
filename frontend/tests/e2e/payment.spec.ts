@@ -40,17 +40,18 @@ test.describe('Stripe Payment Flow', () => {
    * SETUP: beforeEach robusto (patrón existente)
    *
    * Pasos:
-   * 1. Limpiar stores de Svelte (carrito, etc.)
-   * 2. Agregar productos al carrito
-   * 3. Navegar a checkout
-   * 4. Esperar hydration completa
+   * 1. Navegar a home primero (para que la página esté lista)
+   * 2. Limpiar stores de Svelte (carrito, etc.)
+   * 3. Agregar productos al carrito
+   * 4. Navegar a checkout
+   * 5. Esperar hydration completa
    */
   test.beforeEach(async ({ page }) => {
-    // 1. Limpiar stores (patrón de checkout.spec.ts)
-    await clearSvelteStores(page);
-
-    // 2. Navegar a home
+    // 1. Navegar a home PRIMERO (así localStorage es accesible)
     await navigateToHome(page);
+
+    // 2. Limpiar stores (patrón de checkout.spec.ts)
+    await clearSvelteStores(page);
 
     // 3. Agregar producto al carrito
     try {

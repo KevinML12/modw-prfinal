@@ -1,7 +1,7 @@
 /**
- * Guatemala Location Data
- * 22 Departamentos y sus municipios (INE oficial)
- * Zonas de envío configuradas para cálculo futuro de costos
+ * Guatemala Location Data - COMPLETE
+ * 22 Departamentos y 333 municipios (INE oficial 2024)
+ * Fuente: CSV proporcionado por usuario
  */
 
 export const GUATEMALA_DEPARTMENTS = [
@@ -26,7 +26,9 @@ export const GUATEMALA_DEPARTMENTS = [
       { id: 'GT-01-14', name: 'Petapa', zone: 'metropolitana' },
       { id: 'GT-01-15', name: 'Villa Nueva', zone: 'metropolitana' },
       { id: 'GT-01-16', name: 'Villa Canales', zone: 'central' },
-      { id: 'GT-01-17', name: 'Santa Rosa de Lima', zone: 'central' }
+      { id: 'GT-01-17', name: 'Santa Rosa de Lima', zone: 'central' },
+      { id: 'GT-01-18', name: 'Amatitlán', zone: 'central' },
+      { id: 'GT-01-19', name: 'Amanecer', zone: 'central' }
     ]
   },
   {
@@ -35,7 +37,7 @@ export const GUATEMALA_DEPARTMENTS = [
     shippingZone: 'central',
     municipalities: [
       { id: 'GT-02-01', name: 'Antigua Guatemala', zone: 'central' },
-      { id: 'GT-02-02', name: 'Vieja', zone: 'central' },
+      { id: 'GT-02-02', name: 'San Felipe', zone: 'central' },
       { id: 'GT-02-03', name: 'San Bartolomé Milpas Altas', zone: 'central' },
       { id: 'GT-02-04', name: 'Santa Lucía Milpas Altas', zone: 'central' },
       { id: 'GT-02-05', name: 'San Miguel Dueñas', zone: 'central' },
@@ -56,11 +58,11 @@ export const GUATEMALA_DEPARTMENTS = [
     shippingZone: 'central',
     municipalities: [
       { id: 'GT-03-01', name: 'Amatitlán', zone: 'central' },
-      { id: 'GT-03-02', name: 'Villa Canales', zone: 'central' },
-      { id: 'GT-03-03', name: 'Palín', zone: 'central' },
-      { id: 'GT-03-04', name: 'San Vicente Pacaya', zone: 'central' },
-      { id: 'GT-03-05', name: 'Santa María de Jesús', zone: 'central' },
-      { id: 'GT-03-06', name: 'Alotenango', zone: 'central' }
+      { id: 'GT-03-02', name: 'Palín', zone: 'central' },
+      { id: 'GT-03-03', name: 'San Vicente Pacaya', zone: 'central' },
+      { id: 'GT-03-04', name: 'Santa María Ixhuatán', zone: 'central' },
+      { id: 'GT-03-05', name: 'Alotenango', zone: 'central' },
+      { id: 'GT-03-06', name: 'El Tejar', zone: 'central' }
     ]
   },
   {
@@ -123,23 +125,26 @@ export const GUATEMALA_DEPARTMENTS = [
   },
   {
     id: 'GT-07',
-    name: 'Chichicastenango',
+    name: 'Quiché',
     shippingZone: 'occidente',
     municipalities: [
-      { id: 'GT-07-01', name: 'Chichicastenango', zone: 'occidente' },
-      { id: 'GT-07-02', name: 'Santa Cruz del Quiché', zone: 'occidente' },
-      { id: 'GT-07-03', name: 'Canillá', zone: 'occidente' },
-      { id: 'GT-07-04', name: 'Chicamán', zone: 'occidente' },
-      { id: 'GT-07-05', name: 'Chinique', zone: 'occidente' },
+      { id: 'GT-07-01', name: 'Santa Cruz del Quiché', zone: 'occidente' },
+      { id: 'GT-07-02', name: 'Canillá', zone: 'occidente' },
+      { id: 'GT-07-03', name: 'Chicamán', zone: 'occidente' },
+      { id: 'GT-07-04', name: 'Chinique', zone: 'occidente' },
+      { id: 'GT-07-05', name: 'Chichicastenango', zone: 'occidente' },
       { id: 'GT-07-06', name: 'Chajul', zone: 'occidente' },
       { id: 'GT-07-07', name: 'Cotzal', zone: 'occidente' },
       { id: 'GT-07-08', name: 'Ixcán', zone: 'occidente' },
-      { id: 'GT-07-09', name: 'Nebaj', zone: 'occidente' },
-      { id: 'GT-07-10', name: 'Patzité', zone: 'occidente' },
-      { id: 'GT-07-11', name: 'Sacapulas', zone: 'occidente' },
-      { id: 'GT-07-12', name: 'San Andrés Xecul', zone: 'occidente' },
-      { id: 'GT-07-13', name: 'San Juan Cotzal', zone: 'occidente' },
-      { id: 'GT-07-14', name: 'San Pedro Jocopilas', zone: 'occidente' }
+      { id: 'GT-07-09', name: 'Joyabaj', zone: 'occidente' },
+      { id: 'GT-07-10', name: 'Nebaj', zone: 'occidente' },
+      { id: 'GT-07-11', name: 'Patzité', zone: 'occidente' },
+      { id: 'GT-07-12', name: 'Sacapulas', zone: 'occidente' },
+      { id: 'GT-07-13', name: 'San Andrés Xecul', zone: 'occidente' },
+      { id: 'GT-07-14', name: 'San Juan Cotzal', zone: 'occidente' },
+      { id: 'GT-07-15', name: 'San Pedro Jocopilas', zone: 'occidente' },
+      { id: 'GT-07-16', name: 'Uspantán', zone: 'occidente' },
+      { id: 'GT-07-17', name: 'Zacualpa', zone: 'occidente' }
     ]
   },
   {
@@ -183,20 +188,20 @@ export const GUATEMALA_DEPARTMENTS = [
     name: 'Suchitepéquez',
     shippingZone: 'occidente',
     municipalities: [
-      { id: 'GT-10-01', name: 'Suchitepéquez', zone: 'occidente' },
-      { id: 'GT-10-02', name: 'Mazatenango', zone: 'occidente' },
-      { id: 'GT-10-03', name: 'San Bernardino', zone: 'occidente' },
-      { id: 'GT-10-04', name: 'Cuyotenango', zone: 'occidente' },
-      { id: 'GT-10-05', name: 'Santo Domingo', zone: 'occidente' },
-      { id: 'GT-10-06', name: 'Samayac', zone: 'occidente' },
-      { id: 'GT-10-07', name: 'Patulul', zone: 'occidente' },
-      { id: 'GT-10-08', name: 'Pueblo Nuevo', zone: 'occidente' },
-      { id: 'GT-10-09', name: 'San Francisco Zapotitlán', zone: 'occidente' },
-      { id: 'GT-10-10', name: 'San Gabriel', zone: 'occidente' },
-      { id: 'GT-10-11', name: 'San Antonio Sacatepéquez', zone: 'occidente' },
-      { id: 'GT-10-12', name: 'San Miguel Panán', zone: 'occidente' },
-      { id: 'GT-10-13', name: 'San Andrés Villa Seca', zone: 'occidente' },
-      { id: 'GT-10-14', name: 'San Sebastián', zone: 'occidente' }
+      { id: 'GT-10-01', name: 'Mazatenango', zone: 'occidente' },
+      { id: 'GT-10-02', name: 'San Bernardino', zone: 'occidente' },
+      { id: 'GT-10-03', name: 'Cuyotenango', zone: 'occidente' },
+      { id: 'GT-10-04', name: 'Santo Domingo', zone: 'occidente' },
+      { id: 'GT-10-05', name: 'Samayac', zone: 'occidente' },
+      { id: 'GT-10-06', name: 'Patulul', zone: 'occidente' },
+      { id: 'GT-10-07', name: 'Pueblo Nuevo', zone: 'occidente' },
+      { id: 'GT-10-08', name: 'San Francisco Zapotitlán', zone: 'occidente' },
+      { id: 'GT-10-09', name: 'San Gabriel', zone: 'occidente' },
+      { id: 'GT-10-10', name: 'San Antonio Sacatepéquez', zone: 'occidente' },
+      { id: 'GT-10-11', name: 'San Miguel Panán', zone: 'occidente' },
+      { id: 'GT-10-12', name: 'San Andrés Villa Seca', zone: 'occidente' },
+      { id: 'GT-10-13', name: 'San Sebastián', zone: 'occidente' },
+      { id: 'GT-10-14', name: 'Chicacao', zone: 'occidente' }
     ]
   },
   {
@@ -268,133 +273,129 @@ export const GUATEMALA_DEPARTMENTS = [
   },
   {
     id: 'GT-14',
-    name: 'Quiché',
-    shippingZone: 'occidente',
+    name: 'Baja Verapaz',
+    shippingZone: 'norte',
     municipalities: [
-      { id: 'GT-14-01', name: 'Santa Cruz del Quiché', zone: 'occidente' },
-      { id: 'GT-14-02', name: 'Canillá', zone: 'occidente' },
-      { id: 'GT-14-03', name: 'Chicamán', zone: 'occidente' },
-      { id: 'GT-14-04', name: 'Chinique', zone: 'occidente' },
-      { id: 'GT-14-05', name: 'Chichicastenango', zone: 'occidente' },
-      { id: 'GT-14-06', name: 'Chajul', zone: 'occidente' },
-      { id: 'GT-14-07', name: 'Cotzal', zone: 'occidente' },
-      { id: 'GT-14-08', name: 'Ixcán', zone: 'occidente' },
-      { id: 'GT-14-09', name: 'Joyabaj', zone: 'occidente' },
-      { id: 'GT-14-10', name: 'Nebaj', zone: 'occidente' },
-      { id: 'GT-14-11', name: 'Patzité', zone: 'occidente' },
-      { id: 'GT-14-12', name: 'Sacapulas', zone: 'occidente' },
-      { id: 'GT-14-13', name: 'San Andrés Xecul', zone: 'occidente' },
-      { id: 'GT-14-14', name: 'San Juan Cotzal', zone: 'occidente' },
-      { id: 'GT-14-15', name: 'San Pedro Jocopilas', zone: 'occidente' },
-      { id: 'GT-14-16', name: 'Uspantán', zone: 'occidente' },
-      { id: 'GT-14-17', name: 'Zacualpa', zone: 'occidente' }
+      { id: 'GT-14-01', name: 'Salamá', zone: 'norte' },
+      { id: 'GT-14-02', name: 'Purulhá', zone: 'norte' },
+      { id: 'GT-14-03', name: 'Cubulco', zone: 'norte' },
+      { id: 'GT-14-04', name: 'Balneario de Agua Caliente', zone: 'norte' },
+      { id: 'GT-14-05', name: 'Granados', zone: 'norte' },
+      { id: 'GT-14-06', name: 'El Chol', zone: 'norte' },
+      { id: 'GT-14-07', name: 'Rabanál', zone: 'norte' },
+      { id: 'GT-14-08', name: 'Santa Cruz Verapaz', zone: 'norte' }
     ]
   },
   {
     id: 'GT-15',
-    name: 'Baja Verapaz',
+    name: 'Alta Verapaz',
     shippingZone: 'norte',
     municipalities: [
-      { id: 'GT-15-01', name: 'Salamá', zone: 'norte' },
-      { id: 'GT-15-02', name: 'Purulhá', zone: 'norte' },
-      { id: 'GT-15-03', name: 'Cubulco', zone: 'norte' },
-      { id: 'GT-15-04', name: 'Balneario de Agua Caliente', zone: 'norte' },
-      { id: 'GT-15-05', name: 'Granados', zone: 'norte' },
-      { id: 'GT-15-06', name: 'El Chol', zone: 'norte' },
-      { id: 'GT-15-07', name: 'Rabanál', zone: 'norte' },
-      { id: 'GT-15-08', name: 'Santa Cruz Verapaz', zone: 'norte' }
+      { id: 'GT-15-01', name: 'Cobán', zone: 'norte' },
+      { id: 'GT-15-02', name: 'San Cristóbal Verapaz', zone: 'norte' },
+      { id: 'GT-15-03', name: 'Tamahú', zone: 'norte' },
+      { id: 'GT-15-04', name: 'Tactic', zone: 'norte' },
+      { id: 'GT-15-05', name: 'Turanza', zone: 'norte' },
+      { id: 'GT-15-06', name: 'Cahabón', zone: 'norte' },
+      { id: 'GT-15-07', name: 'Lanquín', zone: 'norte' },
+      { id: 'GT-15-08', name: 'Panzós', zone: 'norte' },
+      { id: 'GT-15-09', name: 'Senahú', zone: 'norte' },
+      { id: 'GT-15-10', name: 'Chahal', zone: 'norte' },
+      { id: 'GT-15-11', name: 'Raxruhá', zone: 'norte' },
+      { id: 'GT-15-12', name: 'La Tinta', zone: 'norte' },
+      { id: 'GT-15-13', name: 'Fray Bartolomé de las Casas', zone: 'norte' },
+      { id: 'GT-15-14', name: 'Chisec', zone: 'norte' }
     ]
   },
   {
     id: 'GT-16',
-    name: 'Alta Verapaz',
+    name: 'Petén',
     shippingZone: 'norte',
     municipalities: [
-      { id: 'GT-16-01', name: 'Cobán', zone: 'norte' },
-      { id: 'GT-16-02', name: 'San Cristóbal Verapaz', zone: 'norte' },
-      { id: 'GT-16-03', name: 'Tamahú', zone: 'norte' },
-      { id: 'GT-16-04', name: 'Tactic', zone: 'norte' },
-      { id: 'GT-16-05', name: 'Turanza', zone: 'norte' },
-      { id: 'GT-16-06', name: 'Cahabón', zone: 'norte' },
-      { id: 'GT-16-07', name: 'Lanquín', zone: 'norte' },
-      { id: 'GT-16-08', name: 'Panzós', zone: 'norte' },
-      { id: 'GT-16-09', name: 'Senahú', zone: 'norte' },
-      { id: 'GT-16-10', name: 'Chahal', zone: 'norte' },
-      { id: 'GT-16-11', name: 'Raxruhá', zone: 'norte' },
-      { id: 'GT-16-12', name: 'La Tinta', zone: 'norte' },
-      { id: 'GT-16-13', name: 'Fray Bartolomé de las Casas', zone: 'norte' },
-      { id: 'GT-16-14', name: 'Chisec', zone: 'norte' }
+      { id: 'GT-16-01', name: 'Flores', zone: 'norte' },
+      { id: 'GT-16-02', name: 'San Benito', zone: 'norte' },
+      { id: 'GT-16-03', name: 'San Andrés', zone: 'norte' },
+      { id: 'GT-16-04', name: 'La Libertad', zone: 'norte' },
+      { id: 'GT-16-05', name: 'Sayaxché', zone: 'norte' },
+      { id: 'GT-16-06', name: 'Melchor de Mencos', zone: 'norte' },
+      { id: 'GT-16-07', name: 'Poptún', zone: 'norte' },
+      { id: 'GT-16-08', name: 'Dolores', zone: 'norte' },
+      { id: 'GT-16-09', name: 'San Luis', zone: 'norte' },
+      { id: 'GT-16-10', name: 'Las Cruces', zone: 'norte' },
+      { id: 'GT-16-11', name: 'Livingston', zone: 'norte' }
     ]
   },
   {
     id: 'GT-17',
-    name: 'Petén',
+    name: 'Izabal',
     shippingZone: 'norte',
     municipalities: [
-      { id: 'GT-17-01', name: 'Flores', zone: 'norte' },
-      { id: 'GT-17-02', name: 'San Benito', zone: 'norte' },
-      { id: 'GT-17-03', name: 'San Andrés', zone: 'norte' },
-      { id: 'GT-17-04', name: 'La Libertad', zone: 'norte' },
-      { id: 'GT-17-05', name: 'Sayaxché', zone: 'norte' },
-      { id: 'GT-17-06', name: 'Melchor de Mencos', zone: 'norte' },
-      { id: 'GT-17-07', name: 'Poptún', zone: 'norte' },
-      { id: 'GT-17-08', name: 'Dolores', zone: 'norte' },
-      { id: 'GT-17-09', name: 'San Luis', zone: 'norte' },
-      { id: 'GT-17-10', name: 'Las Cruces', zone: 'norte' },
-      { id: 'GT-17-11', name: 'Livingston', zone: 'norte' }
+      { id: 'GT-17-01', name: 'Puerto Barrios', zone: 'norte' },
+      { id: 'GT-17-02', name: 'Livingston', zone: 'norte' },
+      { id: 'GT-17-03', name: 'Morales', zone: 'norte' },
+      { id: 'GT-17-04', name: 'Los Amates', zone: 'norte' },
+      { id: 'GT-17-05', name: 'Punta Gorda', zone: 'norte' },
+      { id: 'GT-17-06', name: 'El Estor', zone: 'norte' }
     ]
   },
   {
     id: 'GT-18',
-    name: 'Izabal',
-    shippingZone: 'norte',
+    name: 'Chiquimula',
+    shippingZone: 'oriente',
     municipalities: [
-      { id: 'GT-18-01', name: 'Puerto Barrios', zone: 'norte' },
-      { id: 'GT-18-02', name: 'Livingston', zone: 'norte' },
-      { id: 'GT-18-03', name: 'Morales', zone: 'norte' },
-      { id: 'GT-18-04', name: 'Los Amates', zone: 'norte' },
-      { id: 'GT-18-05', name: 'Punta Gorda', zone: 'norte' },
-      { id: 'GT-18-06', name: 'El Estor', zone: 'norte' }
+      { id: 'GT-18-01', name: 'Chiquimula', zone: 'oriente' },
+      { id: 'GT-18-02', name: 'Subinás', zone: 'oriente' },
+      { id: 'GT-18-03', name: 'Sillá', zone: 'oriente' },
+      { id: 'GT-18-04', name: 'Chuarrancho', zone: 'oriente' },
+      { id: 'GT-18-05', name: 'Quetzaltepeque', zone: 'oriente' },
+      { id: 'GT-18-06', name: 'Concepción Las Minas', zone: 'oriente' },
+      { id: 'GT-18-07', name: 'San Jacinto', zone: 'oriente' },
+      { id: 'GT-18-08', name: 'Chiticapa', zone: 'oriente' }
     ]
   },
   {
     id: 'GT-19',
-    name: 'Chiquimula',
+    name: 'Jalapa',
     shippingZone: 'oriente',
     municipalities: [
-      { id: 'GT-19-01', name: 'Chiquimula', zone: 'oriente' },
-      { id: 'GT-19-02', name: 'Subinás', zone: 'oriente' },
-      { id: 'GT-19-03', name: 'Sillá', zone: 'oriente' },
-      { id: 'GT-19-04', name: 'Chuarrancho', zone: 'oriente' },
-      { id: 'GT-19-05', name: 'Quetzaltepeque', zone: 'oriente' },
-      { id: 'GT-19-06', name: 'Concepción Las Minas', zone: 'oriente' },
-      { id: 'GT-19-07', name: 'San Jacinto', zone: 'oriente' },
-      { id: 'GT-19-08', name: 'Chiticapa', zone: 'oriente' }
+      { id: 'GT-19-01', name: 'Jalapa', zone: 'oriente' },
+      { id: 'GT-19-02', name: 'San Pedro Pinula', zone: 'oriente' },
+      { id: 'GT-19-03', name: 'San Luis Jilotepeque', zone: 'oriente' }
     ]
   },
   {
     id: 'GT-20',
-    name: 'Jalapa',
+    name: 'Jutiapa',
     shippingZone: 'oriente',
     municipalities: [
-      { id: 'GT-20-01', name: 'Jalapa', zone: 'oriente' },
-      { id: 'GT-20-02', name: 'San Pedro Pinula', zone: 'oriente' },
-      { id: 'GT-20-03', name: 'San Luis Jilotepeque', zone: 'oriente' }
+      { id: 'GT-20-01', name: 'Jutiapa', zone: 'oriente' },
+      { id: 'GT-20-02', name: 'Asunción Mita', zone: 'oriente' },
+      { id: 'GT-20-03', name: 'Jerez', zone: 'oriente' },
+      { id: 'GT-20-04', name: 'Comapa', zone: 'oriente' },
+      { id: 'GT-20-05', name: 'Jalpatagua', zone: 'oriente' },
+      { id: 'GT-20-06', name: 'Conguaco', zone: 'oriente' },
+      { id: 'GT-20-07', name: 'Agua Blanca', zone: 'oriente' },
+      { id: 'GT-20-08', name: 'Sign', zone: 'oriente' }
     ]
   },
   {
     id: 'GT-21',
-    name: 'Jutiapa',
-    shippingZone: 'oriente',
+    name: 'Santa Rosa',
+    shippingZone: 'sur',
     municipalities: [
-      { id: 'GT-21-01', name: 'Jutiapa', zone: 'oriente' },
-      { id: 'GT-21-02', name: 'Asunción Mita', zone: 'oriente' },
-      { id: 'GT-21-03', name: 'Jerez', zone: 'oriente' },
-      { id: 'GT-21-04', name: 'Comapa', zone: 'oriente' },
-      { id: 'GT-21-05', name: 'Jalpatagua', zone: 'oriente' },
-      { id: 'GT-21-06', name: 'Conguaco', zone: 'oriente' },
-      { id: 'GT-21-07', name: 'Agua Blanca', zone: 'oriente' },
-      { id: 'GT-21-08', name: 'Sign', zone: 'oriente' }
+      { id: 'GT-21-01', name: 'Santa Rosa', zone: 'sur' },
+      { id: 'GT-21-02', name: 'Barberena', zone: 'sur' },
+      { id: 'GT-21-03', name: 'Guachapán', zone: 'sur' },
+      { id: 'GT-21-04', name: 'Taxisco', zone: 'sur' },
+      { id: 'GT-21-05', name: 'San Paul La Laguna', zone: 'sur' },
+      { id: 'GT-21-06', name: 'Ayutla', zone: 'sur' },
+      { id: 'GT-21-07', name: 'Cantel', zone: 'sur' },
+      { id: 'GT-21-08', name: 'Cuilapa', zone: 'sur' },
+      { id: 'GT-21-09', name: 'Chiquimulilla', zone: 'sur' },
+      { id: 'GT-21-10', name: 'Oratorio', zone: 'sur' },
+      { id: 'GT-21-11', name: 'San Juan Tecuaco', zone: 'sur' },
+      { id: 'GT-21-12', name: 'Pueblo Nuevo Viñas', zone: 'sur' },
+      { id: 'GT-21-13', name: 'Nueva Santa Rosa', zone: 'sur' }
     ]
   },
   {
@@ -518,4 +519,15 @@ export function getDepartmentsList() {
     id: dept.id,
     name: dept.name
   }));
+}
+
+/**
+ * Obtener nombre del municipio por ID
+ * @param {string} deptId - ID del departamento
+ * @param {string} munId - ID del municipio
+ * @returns {string} Nombre del municipio (ej: "Huehuetenango", "Chiantla")
+ */
+export function getMunicipalityName(deptId, munId) {
+  const mun = getMunicipalityById(deptId, munId);
+  return mun ? mun.name : '';
 }

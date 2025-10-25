@@ -51,9 +51,34 @@ type Order struct {
 	// Nombre legible del municipio seleccionado.
 	ShippingMunicipality string `json:"shipping_municipality" gorm:"not null"`
 
-	// ShippingAddress: Dirección de envío detallada (requerida).
-	// Incluye calle, número, apto, zona, etc.
-	ShippingAddress string `json:"shipping_address" gorm:"not null;type:text"`
+	// ShippingAddress: Dirección de envío detallada (requerida para entrega a domicilio).
+	// Incluye calle, número, apto, zona, etc. Si es pickup, puede ser vacía.
+	ShippingAddress string `json:"shipping_address" gorm:"type:text"`
+
+	// DeliveryType: Tipo de entrega seleccionado por el cliente.
+	// Valores: 'home_delivery' (entrega a domicilio) | 'pickup_at_branch' (recogida en sucursal)
+	// Default: 'home_delivery' (para entregas locales siempre es home_delivery)
+	DeliveryType string `json:"delivery_type" gorm:"type:varchar(50);default:'home_delivery'"`
+
+	// PickupBranch: Sucursal de Cargo Expreso seleccionada para recoger (si aplica).
+	// Ejemplo: "Zona 10, Ciudad de Guatemala" o "Centro, Quetzaltenango"
+	// Solo populated si DeliveryType='pickup_at_branch'
+	PickupBranch string `json:"pickup_branch" gorm:"type:varchar(100);omitempty"`
+
+	// DeliveryNotes: Notas adicionales del cliente para la entrega.
+	// Ej: horarios, referencias, instrucciones especiales, etc.
+	// Optional field
+	DeliveryNotes string `json:"delivery_notes" gorm:"type:text;omitempty"`
+
+	// DeliveryLat: Latitud exacta de la ubicacion de entrega (para entregas locales con mapa).
+	// Se obtiene del Google Maps Location Picker.
+	// Ej: 15.3197
+	DeliveryLat *float64 `json:"delivery_lat" gorm:"type:decimal(10,8);omitempty"`
+
+	// DeliveryLng: Longitud exacta de la ubicacion de entrega (para entregas locales con mapa).
+	// Se obtiene del Google Maps Location Picker.
+	// Ej: -91.4714
+	DeliveryLng *float64 `json:"delivery_lng" gorm:"type:decimal(11,8);omitempty"`
 
 	// ShippingZone: Zona de envío clasificada (metropolitana, central, occidente, oriente, norte, etc).
 	// Se usa para cálculo de costos de envío según ubicación.
@@ -65,6 +90,26 @@ type Order struct {
 
 	// ShippingCost: Costo de envío calculado según la zona de envío.
 	ShippingCost float64 `json:"shipping_cost" gorm:"type:decimal(10,2);default:0"`
+
+	// --- Envío y Tracking (Cargo Expreso) ---
+	// ShippingMethod: Método de envío utilizado ('local' o 'cargo_expreso').
+	// 'local' = Entrega personal (Huehuetenango/Chiantla), sin courier
+	// 'cargo_expreso' = Envío nacional con Cargo Expreso
+	ShippingMethod string `json:"shipping_method" gorm:"type:varchar(50);default:'standard'"`
+
+	// ShippingTracking: Número de guía de Cargo Expreso (si aplica).
+	// Se genera cuando se crea la guía en Cargo Expreso.
+	// Ejemplo: "CE-2024-123456"
+	ShippingTracking string `json:"shipping_tracking" gorm:"type:varchar(100);omitempty"`
+
+	// CargoExpresoGuideURL: URL del PDF de la guía de Cargo Expreso (si aplica).
+	// Se obtiene del API de Cargo Expreso tras crear la guía.
+	CargoExpresoGuideURL string `json:"cargo_expreso_guide_url" gorm:"type:text;omitempty"`
+
+	// RequiresCourier: Flag indicando si este envío requiere Cargo Expreso.
+	// true = necesita courier (resto de Guatemala)
+	// false = entrega local (Huehuetenango, Chiantla)
+	RequiresCourier bool `json:"requires_courier" gorm:"default:false"`
 
 	// --- Totales ---
 	// Subtotal: Suma de los precios de todos los OrderItems.

@@ -4,12 +4,25 @@ import { writable, derived } from 'svelte/store';
 // 1. Definimos la función que crea nuestro store
 function createCart() {
   // Estado inicial: objeto con items, subtotal, total, itemCount
-  const initialState = {
+  let initialState = {
     items: [],
     subtotal: 0,
     total: 0,
     itemCount: 0
   };
+
+  // NUEVO: Cargar desde localStorage si es browser
+  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+    try {
+      const saved = localStorage.getItem('moda-organica-cart');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        initialState = parsed;
+      }
+    } catch (e) {
+      console.error('Error cargando carrito desde localStorage:', e);
+    }
+  }
   
   const { subscribe, set, update } = writable(initialState);
 
@@ -18,12 +31,23 @@ function createCart() {
     const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
     
-    return {
+    const newState = {
       items,
       subtotal,
       total: subtotal, // El total se actualiza en checkout con envío
       itemCount
     };
+
+    // NUEVO: Guardar en localStorage
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      try {
+        localStorage.setItem('moda-organica-cart', JSON.stringify(newState));
+      } catch (e) {
+        console.error('Error guardando carrito en localStorage:', e);
+      }
+    }
+
+    return newState;
   }
 
   return {
@@ -72,7 +96,22 @@ function createCart() {
 
     // 5. Método para vaciar el carrito
     clear: () => {
-      set(initialState);
+      const emptyState = {
+        items: [],
+        subtotal: 0,
+        total: 0,
+        itemCount: 0
+      };
+      set(emptyState);
+      
+      // Limpiar localStorage
+      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        try {
+          localStorage.removeItem('moda-organica-cart');
+        } catch (e) {
+          console.error('Error limpiando carrito de localStorage:', e);
+        }
+      }
     },
 
     // 6. Método para obtener el estado actual (síncrono)

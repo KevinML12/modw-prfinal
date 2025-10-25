@@ -4,6 +4,7 @@ package controllers
 import (
 	"log"
 	"net/http"
+	"strconv"
 
 	"moda-organica/backend/models"
 	"moda-organica/backend/services"
@@ -273,5 +274,132 @@ func (oc *OrderController) UpdateOrderStatus(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Estado actualizado",
 		"order":   order,
+	})
+}
+
+// ===== MÉTODOS DE ADMINISTRACIÓN (Para panel de admin) =====
+
+// AdminGetOrders obtiene todas las órdenes con filtros (admin)
+// GET /api/v1/admin/orders?status=pending&limit=50&offset=0
+func (oc *OrderController) AdminGetOrders(c *gin.Context) {
+	var orders []models.Order
+
+	query := oc.DB.Preload("OrderItems.Product")
+
+	// Filtro por status
+	if status := c.Query("status"); status != "" {
+		query = query.Where("status = ?", status)
+	}
+
+	// Filtro por municipio
+	if municipality := c.Query("municipality"); municipality != "" {
+		query = query.Where("shipping_municipality = ?", municipality)
+	}
+
+	// Limit y Offset
+	limit := 50
+	if l := c.Query("limit"); l != "" {
+		if parsed, _ := strconv.Atoi(l); parsed > 0 && parsed <= 500 {
+			limit = parsed
+		}
+	}
+
+	offset := 0
+	if o := c.Query("offset"); o != "" {
+		if parsed, _ := strconv.Atoi(o); parsed >= 0 {
+			offset = parsed
+		}
+	}
+
+	// Contar total
+	var totalCount int64
+	oc.DB.Model(&models.Order{}).Count(&totalCount)
+
+	// Obtener órdenes
+	if err := query.Order("created_at DESC").Limit(limit).Offset(offset).Find(&orders).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error obteniendo órdenes"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"orders": orders,
+		"count":  len(orders),
+		"total":  totalCount,
+	})
+}
+
+// AdminGetOrderByID obtiene una orden específica (admin)
+// GET /api/v1/admin/orders/:id
+func (oc *OrderController) AdminGetOrderByID(c *gin.Context) {
+	orderID := c.Param("id")
+
+	var order models.Order
+	if err := oc.DB.Preload("OrderItems.Product").First(&order, orderID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Orden no encontrada"})
+		return
+	}
+
+	c.JSON(http.StatusOK, order)
+}
+
+// AdminGetOrdersStats obtiene estadísticas para el dashboard
+// GET /api/v1/admin/orders/stats
+func (oc *OrderController) AdminGetOrdersStats(c *gin.Context) {
+	type StatsResponse struct {
+		TotalOrders      int64   `json:"total_orders"`
+		PendingOrders    int64   `json:"pending_orders"`
+		ProcessingOrders int64   `json:"processing_orders"`
+		ShippedOrders    int64   `json:"shipped_orders"`
+		DeliveredOrders  int64   `json:"delivered_orders"`
+		CancelledOrders  int64   `json:"cancelled_orders"`
+		TotalRevenue     float64 `json:"total_revenue"`
+	}
+
+	var stats StatsResponse
+
+	// Total de órdenes
+	oc.DB.Model(&models.Order{}).Count(&stats.TotalOrders)
+
+	// Por status
+	oc.DB.Model(&models.Order{}).Where("status = ?", "pending").Count(&stats.PendingOrders)
+	oc.DB.Model(&models.Order{}).Where("status = ?", "processing").Count(&stats.ProcessingOrders)
+	oc.DB.Model(&models.Order{}).Where("status = ?", "shipped").Count(&stats.ShippedOrders)
+	oc.DB.Model(&models.Order{}).Where("status = ?", "delivered").Count(&stats.DeliveredOrders)
+	oc.DB.Model(&models.Order{}).Where("status = ?", "cancelled").Count(&stats.CancelledOrders)
+
+	// Revenue total
+	oc.DB.Model(&models.Order{}).
+		Where("status IN ?", []string{"shipped", "delivered"}).
+		Select("COALESCE(SUM(total), 0)").
+		Scan(&stats.TotalRevenue)
+
+	c.JSON(http.StatusOK, stats)
+}
+
+// AdminGetOrdersMap obtiene órdenes con coordenadas para mapa
+// GET /api/v1/admin/orders/map?municipality=Huehuetenango
+func (oc *OrderController) AdminGetOrdersMap(c *gin.Context) {
+	var orders []models.Order
+
+	query := oc.DB.Where("delivery_lat IS NOT NULL AND delivery_lng IS NOT NULL")
+
+	// Filtro por municipio
+	if municipality := c.Query("municipality"); municipality != "" {
+		query = query.Where("shipping_municipality = ?", municipality)
+	}
+
+	// Filtro por status
+	if status := c.Query("status"); status != "" {
+		query = query.Where("status = ?", status)
+	}
+
+	if err := query.Order("created_at DESC").Find(&orders).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error obteniendo órdenes"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"orders": orders,
+		"count":  len(orders),
 	})
 }

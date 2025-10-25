@@ -1,0 +1,165 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e6]:
+        - link "✨ Moda Orgánica Joyería Artesanal" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e8]: ✨
+          - generic [ref=e9]:
+            - heading "Moda Orgánica" [level=1] [ref=e10]
+            - paragraph [ref=e11]: Joyería Artesanal
+        - navigation [ref=e12]:
+          - link "Tienda" [ref=e13] [cursor=pointer]:
+            - /url: /
+          - link "Ver carrito" [ref=e14] [cursor=pointer]:
+            - /url: /checkout
+            - img [ref=e15]
+          - button "Cambiar a modo oscuro" [ref=e17] [cursor=pointer]:
+            - img [ref=e18]
+  - main [ref=e20]:
+    - generic [ref=e21]:
+      - img "Joyería artesanal" [ref=e23]
+      - generic [ref=e26]:
+        - generic [ref=e28]: Colección 2025
+        - paragraph [ref=e29]: Lujo Silencioso
+        - heading "Joyería artesanal que celebra la elegancia atemporal" [level=2] [ref=e30]
+        - paragraph [ref=e31]: Cada pieza es una obra de arte única, creada con materiales nobles y sostenibles.
+        - button "Explorar Colección" [ref=e32] [cursor=pointer]:
+          - text: Explorar Colección
+          - img [ref=e33]
+    - generic [ref=e36]:
+      - generic [ref=e37]:
+        - generic [ref=e39]: ✨
+        - heading "Diseño Único" [level=3] [ref=e40]
+        - paragraph [ref=e41]: Cada pieza es creada individualmente por artesanos expertos, garantizando que tu joya sea verdaderamente única y exclusiva.
+      - generic [ref=e42]:
+        - generic [ref=e44]: 🍃
+        - heading "Materiales Sostenibles" [level=3] [ref=e45]
+        - paragraph [ref=e46]: Utilizamos oro y plata reciclados, certificados por FairTrade. Lujo consciente comprometido con el planeta.
+      - generic [ref=e47]:
+        - generic [ref=e49]: 🛡️
+        - heading "Calidad Garantizada" [level=3] [ref=e50]
+        - paragraph [ref=e51]: Certificado de autenticidad incluido con cada pieza. Garantía de por vida en manufactura.
+      - generic [ref=e52]:
+        - generic [ref=e54]: 💕
+        - heading "Hecho con Amor" [level=3] [ref=e55]
+        - paragraph [ref=e56]: Artesanos dedicados invierten horas perfeccionando cada detalle con pasión y cuidado.
+    - generic [ref=e57]:
+      - generic [ref=e58]:
+        - heading "Nuestra Colección" [level=2] [ref=e59]
+        - paragraph [ref=e60]: Diseño orgánico con estilo contemporáneo
+      - generic [ref=e61]:
+        - textbox "Buscar por descripción..." [ref=e62]
+        - button "Botón de búsqueda" [ref=e63] [cursor=pointer]:
+          - img [ref=e64]
+      - paragraph [ref=e67]: 10 productos encontrados
+    - generic [ref=e68]:
+      - generic [ref=e69]:
+        - button "Collar \"Luna Mística\" Collar \"Luna Mística\" $450 Elegante collar de plata con un colgante de piedra lunar. Añadir al carrito" [ref=e70] [cursor=pointer]:
+          - img "Collar \"Luna Mística\"" [ref=e72]
+          - generic [ref=e74]:
+            - heading "Collar \"Luna Mística\"" [level=3] [ref=e75]
+            - paragraph [ref=e76]: $450
+            - paragraph: Elegante collar de plata con un colgante de piedra lunar.
+          - button "Añadir al carrito" [ref=e79]:
+            - img [ref=e80]
+            - generic [ref=e82]: Agregar
+        - button "Anillo \"Sol de Jade\" Anillo \"Sol de Jade\" $680 Anillo artesanal con una pieza central de jade guatemalteco. Añadir al carrito" [ref=e83] [cursor=pointer]:
+          - img "Anillo \"Sol de Jade\"" [ref=e85]
+          - generic [ref=e87]:
+            - heading "Anillo \"Sol de Jade\"" [level=3] [ref=e88]
+            - paragraph [ref=e89]: $680
+            - paragraph: Anillo artesanal con una pieza central de jade guatemalteco.
+          - button "Añadir al carrito" [ref=e92]:
+            - img [ref=e93]
+            - generic [ref=e95]: Agregar
+        - button "Aretes \"Gota de Rocío\" Aretes \"Gota de Rocío\" $325 Delicados aretes de oro laminado con cristales de topacio. Añadir al carrito" [ref=e96] [cursor=pointer]:
+          - img "Aretes \"Gota de Rocío\"" [ref=e98]
+          - generic [ref=e100]:
+            - heading "Aretes \"Gota de Rocío\"" [level=3] [ref=e101]
+            - paragraph [ref=e102]: $325
+            - paragraph: Delicados aretes de oro laminado con cristales de topacio.
+          - button "Añadir al carrito" [ref=e105]:
+            - img [ref=e106]
+            - generic [ref=e108]: Agregar
+        - button "Collar \"Luna Mística\" Collar \"Luna Mística\" $450 Elegante collar de plata con un colgante de piedra lunar. Añadir al carrito" [ref=e109] [cursor=pointer]:
+          - img "Collar \"Luna Mística\"" [ref=e111]
+          - generic [ref=e113]:
+            - heading "Collar \"Luna Mística\"" [level=3] [ref=e114]
+            - paragraph [ref=e115]: $450
+            - paragraph: Elegante collar de plata con un colgante de piedra lunar.
+          - button "Añadir al carrito" [ref=e118]:
+            - img [ref=e119]
+            - generic [ref=e121]: Agregar
+        - button "Anillo \"Sol de Jade\" Anillo \"Sol de Jade\" $680 Anillo artesanal con una pieza central de jade guatemalteco. Añadir al carrito" [ref=e122] [cursor=pointer]:
+          - img "Anillo \"Sol de Jade\"" [ref=e124]
+          - generic [ref=e126]:
+            - heading "Anillo \"Sol de Jade\"" [level=3] [ref=e127]
+            - paragraph [ref=e128]: $680
+            - paragraph: Anillo artesanal con una pieza central de jade guatemalteco.
+          - button "Añadir al carrito" [ref=e131]:
+            - img [ref=e132]
+            - generic [ref=e134]: Agregar
+        - button "Aretes \"Gota de Rocío\" Aretes \"Gota de Rocío\" $325 Delicados aretes de oro laminado con cristales de topacio. Añadir al carrito" [ref=e135] [cursor=pointer]:
+          - img "Aretes \"Gota de Rocío\"" [ref=e137]
+          - generic [ref=e139]:
+            - heading "Aretes \"Gota de Rocío\"" [level=3] [ref=e140]
+            - paragraph [ref=e141]: $325
+            - paragraph: Delicados aretes de oro laminado con cristales de topacio.
+          - button "Añadir al carrito" [ref=e144]:
+            - img [ref=e145]
+            - generic [ref=e147]: Agregar
+        - button "Anillo Sol de Jade - TEST Anillo Sol de Jade - TEST $680 Anillo artesanal con jade guatemalteco Añadir al carrito" [ref=e148] [cursor=pointer]:
+          - img "Anillo Sol de Jade - TEST" [ref=e150]
+          - generic [ref=e152]:
+            - heading "Anillo Sol de Jade - TEST" [level=3] [ref=e153]
+            - paragraph [ref=e154]: $680
+            - paragraph: Anillo artesanal con jade guatemalteco
+          - button "Añadir al carrito" [ref=e157]:
+            - img [ref=e158]
+            - generic [ref=e160]: Agregar
+        - button "💍 Imagen próximamente Anillo Sol de Jade - TEST $680 Añadir al carrito" [ref=e161] [cursor=pointer]:
+          - generic [ref=e164]:
+            - text: 💍
+            - paragraph [ref=e165]: Imagen próximamente
+          - generic [ref=e167]:
+            - heading "Anillo Sol de Jade - TEST" [level=3] [ref=e168]
+            - paragraph [ref=e169]: $680
+            - paragraph
+          - button "Añadir al carrito" [ref=e172]:
+            - img [ref=e173]
+            - generic [ref=e175]: Agregar
+        - button "💍 Imagen próximamente Anillo Sol de Jade - TEST $680 Añadir al carrito" [ref=e176] [cursor=pointer]:
+          - generic [ref=e179]:
+            - text: 💍
+            - paragraph [ref=e180]: Imagen próximamente
+          - generic [ref=e182]:
+            - heading "Anillo Sol de Jade - TEST" [level=3] [ref=e183]
+            - paragraph [ref=e184]: $680
+            - paragraph
+          - button "Añadir al carrito" [ref=e187]:
+            - img [ref=e188]
+            - generic [ref=e190]: Agregar
+        - button "Anillo Sol de Jade - TEST Anillo Sol de Jade - TEST $680 Anillo artesanal con jade guatemalteco Añadir al carrito" [ref=e191] [cursor=pointer]:
+          - img "Anillo Sol de Jade - TEST" [ref=e193]
+          - generic [ref=e195]:
+            - heading "Anillo Sol de Jade - TEST" [level=3] [ref=e196]
+            - paragraph [ref=e197]: $680
+            - paragraph: Anillo artesanal con jade guatemalteco
+          - button "Añadir al carrito" [ref=e200]:
+            - img [ref=e201]
+            - generic [ref=e203]: Agregar
+      - button "Cargar más productos" [ref=e205] [cursor=pointer]
+    - generic [ref=e207]:
+      - heading "¿Lista para encontrar tu joya perfecta?" [level=2] [ref=e208]
+      - paragraph [ref=e209]: Explora nuestra colección completa y descubre piezas únicas que cuentan tu historia.
+      - button "Ver todas las colecciones" [ref=e210] [cursor=pointer]:
+        - text: Ver todas las colecciones
+        - img [ref=e211]
+  - contentinfo [ref=e213]:
+    - contentinfo [ref=e214]:
+      - paragraph [ref=e216]: © 2025 Moda Orgánica. Todos los derechos reservados.
+```

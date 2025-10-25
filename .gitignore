@@ -1,0 +1,39 @@
+# Environment files - NUNCA versionar estos archivos
+.env
+.env.local
+.env.*.local
+frontend/.env
+backend/.env
+
+# Dependencies
+node_modules/
+pnpm-store/
+.pnpm-store/
+vendor/
+
+# Build outputs
+dist/
+build/
+*.out
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Temporal
+tmp/
+temp/
+.turbo/

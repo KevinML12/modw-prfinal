@@ -10,7 +10,7 @@
     e.stopPropagation();
     cart.addProduct(product);
     // TODO: Mostrar toast de confirmación
-    console.log('✅ Producto agregado al carrito:', product.name);
+    console.log('Producto agregado al carrito:', product.name);
   }
 
   async function handleViewDetails() {

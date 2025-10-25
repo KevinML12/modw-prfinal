@@ -11,7 +11,7 @@ services:
     volumes:
       - ollama_data:/root/.ollama
     networks:
-      - fenix-net # <-- Usa fenix-net
+      - fenix-net
 
   # --- Servicio del Backend (Go + Gin) ---
   backend:
@@ -19,6 +19,8 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
+    env_file:
+      - .env
     ports:
       - "8080:8080"
     volumes:
@@ -33,10 +35,10 @@ services:
       OLLAMA_URL: http://ollama:11434
     depends_on:
       - meilisearch
-      - ollama # <-- AÑADIDO
+      - ollama
     restart: unless-stopped
     networks:
-      - fenix-net # <-- Usa fenix-net
+      - fenix-net
 
   # --- Servicio del Frontend (SvelteKit) ---
   frontend:
@@ -45,6 +47,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
+    env_file:
+      - .env
     ports:
       - "5173:5173"
     volumes:
@@ -54,7 +58,8 @@ services:
     environment:
       VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
       VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
-      VITE_API_URL: http://backend:8080
+      VITE_API_URL: http://localhost:8080
+      VITE_GOOGLE_MAPS_API_KEY: ${VITE_GOOGLE_MAPS_API_KEY}
     command: bash -c "pnpm install && pnpm playwright install && pnpm run dev --host"
     depends_on:
       - backend
@@ -65,7 +70,7 @@ services:
   # --- Servicio de Búsqueda (MeiliSearch) ---
   meilisearch:
     container_name: phoenix_meilisearch
-    image: getmeili/meilisearch:v1.3 # Considera usar una versión más reciente si hay
+    image: getmeili/meilisearch:v1.3
     ports:
       - "7700:7700"
     environment:
@@ -75,40 +80,31 @@ services:
       - meili_data:/meili_data
     restart: unless-stopped
     networks:
-      - fenix-net # <-- Usa fenix-net
+      - fenix-net
 
   # --- Servicio de Playwright para E2E Tests ---
-  # Uso: docker-compose --profile test up -d playwright
-  # Tests: docker-compose exec playwright pnpm test:e2e
   playwright:
     container_name: phoenix_playwright
     image: mcr.microsoft.com/playwright:v1.40.0-focal
     profiles:
-      - test  # Solo se levanta con --profile test
+      - test
     depends_on:
       frontend:
         condition: service_started
       backend:
         condition: service_started
     volumes:
-      # Montar directorio frontend
       - ./frontend:/app
-      # Volumen anónimo para node_modules (evita conflictos con host)
       - /app/node_modules
-      # Volúmenes nombrados para reportes y resultados
       - playwright-report:/app/playwright-report
       - playwright-results:/app/test-results
     working_dir: /app
     environment:
-      # URLs internas de Docker para acceder a los servicios
       BASE_URL: http://frontend:5173
       API_URL: http://backend:8080
       NODE_ENV: test
-      # Variables para Playwright
       PLAYWRIGHT_HTML_REPORT: ./playwright-report
       PLAYWRIGHT_JSON_REPORT: ./test-results/results.json
-    # Mantener el contenedor vivo para ejecutar tests manualmente
-    # Los tests se ejecutan con: docker-compose exec playwright pnpm test:e2e
     command: sleep infinity
     networks:
       - fenix-net
@@ -121,7 +117,7 @@ services:
 
 # Definición de las redes personalizadas
 networks:
-  fenix-net: # <-- Usa fenix-net
+  fenix-net:
     driver: bridge
 
 # Definición de los volúmenes nombrados
@@ -130,7 +126,6 @@ volumes:
   ollama_data:
   meili_data:
     driver: local
-  # Volúmenes para reportes y resultados de Playwright
   playwright-report:
     driver: local
   playwright-results:

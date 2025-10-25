@@ -355,3 +355,47 @@ export async function initializeSvelteTestEnvironment(page) {
   await waitForSvelteKitHydration(page);
   await triggerSvelteReactivity(page);
 }
+
+/**
+ * Espera a que el carrito esté sincronizado con el store
+ * 
+ * Valida que:
+ * - El localStorage tenga la key 'cart'
+ * - El carrito sea un JSON válido
+ * - El carrito tenga la estructura esperada
+ * 
+ * @param {import('@playwright/test').Page} page - Instancia de página de Playwright
+ * @param {number} timeout - Timeout en ms
+ * @returns {Promise<Object>} El objeto del carrito
+ * 
+ * @example
+ * const cart = await waitForCartSync(page);
+ * console.log(cart.items.length);
+ */
+export async function waitForCartSync(page, timeout = DEFAULT_SVELTE_TIMEOUTS.STORE_UPDATE) {
+  const startTime = Date.now();
+  
+  while (Date.now() - startTime < timeout) {
+    try {
+      const cartJson = await page.evaluate(() => {
+        return localStorage.getItem('cart');
+      });
+      
+      if (cartJson) {
+        const cart = JSON.parse(cartJson);
+        if (cart && typeof cart === 'object' && 'items' in cart) {
+          return cart;
+        }
+      }
+    } catch (error) {
+      // JSON inválido o localStorage vacío, seguir esperando
+    }
+    
+    // Esperar un poco antes de intentar de nuevo
+    await page.waitForTimeout(100);
+  }
+  
+  throw new Error(
+    `Cart no sincronizó en ${timeout}ms. Posiblemente el store no se inicializó correctamente.`
+  );
+}

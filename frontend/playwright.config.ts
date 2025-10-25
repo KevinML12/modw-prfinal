@@ -1,11 +1,29 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * Configuración de Playwright optimizada para Docker
+ * Configuración de Playwright optimizada para Docker y Local
  * 
- * Ejecutar dentro del contenedor 'playwright' de docker-compose
- * Los tests se comunican con frontend y backend a través de la red Docker interna
+ * Auto-detecta el entorno:
+ * - Docker: http://frontend:5173 (cuando BASE_URL env var está set)
+ * - Local: http://localhost:5173 (por defecto)
+ * 
+ * Para usar con Docker:
+ *   docker-compose exec frontend pnpm playwright test
+ * 
+ * Para usar local:
+ *   cd frontend
+ *   pnpm dev  # en otra terminal
+ *   pnpm playwright test
  */
+
+// Detectar si se ejecuta en Docker o local
+const isDocker = process.env.DOCKER_ENV === 'true' || process.env.BASE_URL === 'http://frontend:5173';
+const baseURL = process.env.BASE_URL || (isDocker ? 'http://frontend:5173' : 'http://localhost:5173');
+
+console.log(`🎭 Playwright configuration loaded:`);
+console.log(`   Environment: ${isDocker ? 'Docker' : 'Local'}`);
+console.log(`   Base URL: ${baseURL}`);
+
 export default defineConfig({
   // Directorio donde están los tests E2E
   testDir: './tests/e2e',
@@ -13,21 +31,21 @@ export default defineConfig({
   // Estructura de reportes
   fullyParallel: false, // Secuencial por conflictos de localStorage en carrito
   forbidOnly: !!process.env.CI, // Prevenir test.only en CI
-  retries: process.env.CI ? 2 : 2, // 2 reintentos (variabilidad en Docker)
+  retries: process.env.CI ? 2 : 1, // 1 reintento en local, 2 en Docker
   workers: 1, // 1 solo worker - tests secuenciales
   maxFailures: 5, // Detener después de 5 fallos para ahorrar tiempo
 
   // Reporters
   reporter: [
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
-    ['list'], // Output en consola para ver progreso en Docker logs
+    ['list'], // Output en consola para ver progreso
     ['json', { outputFile: 'playwright-report/results.json' }],
   ],
 
   // Configuración de uso compartida entre todos los tests
   use: {
-    // Base URL - usar nombre del servicio Docker, no localhost
-    baseURL: process.env.BASE_URL || 'http://frontend:5173',
+    // Base URL - auto-detecta Docker o Local
+    baseURL: baseURL,
 
     // Timeouts ajustados para Docker (más margen)
     actionTimeout: 10000, // Tiempo para clicks, fills, etc

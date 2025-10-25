@@ -1,15 +1,21 @@
 /**
  * Datos de prueba reutilizables para tests E2E de Moda Orgánica
- * Se ejecutan dentro del contenedor 'playwright' de Docker
+ * Auto-detecta si se ejecuta en Docker o Local
  */
 
 // ============================================
-// URLS DE SERVICIOS
+// URLS DE SERVICIOS - AUTO-DETECT ENVIRONMENT
 // ============================================
 
+// Detectar si se ejecuta en Docker o Local
+const isDocker = process.env.DOCKER_ENV === 'true' || process.env.BASE_URL === 'http://frontend:5173';
+
 export const BASE_URLS = {
-  frontend: process.env.BASE_URL || 'http://frontend:5173',
-  backend: process.env.API_URL || 'http://backend:8080',
+  // Frontend: usa localhost en local, frontend en Docker
+  frontend: process.env.BASE_URL || (isDocker ? 'http://frontend:5173' : 'http://localhost:5173'),
+  
+  // Backend: usa localhost en local, backend en Docker
+  backend: process.env.API_URL || (isDocker ? 'http://backend:8080' : 'http://localhost:8080'),
 };
 
 // ============================================

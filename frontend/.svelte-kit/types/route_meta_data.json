@@ -2,6 +2,9 @@
 	"/": [
 		"src/routes/+page.js"
 	],
+	"/admin": [],
+	"/admin/inventory": [],
+	"/admin/orders": [],
 	"/checkout": [],
 	"/checkout/cancel": [],
 	"/checkout/success": [],
