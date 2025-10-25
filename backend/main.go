@@ -16,9 +16,18 @@ import (
 
 func main() {
 	// Carga variables de entorno desde .env
-	err := godotenv.Load()
+	// Intenta cargar desde el home del root (donde está montado el archivo)
+	err := godotenv.Load("/root/.env")
 	if err != nil {
-		log.Println("Advertencia: No se pudo cargar el archivo .env.")
+		// Si falla, intenta desde el directorio actual (docker)
+		err = godotenv.Load()
+		if err != nil {
+			// Si aún falla, intenta desde el directorio padre
+			err = godotenv.Load("../.env")
+			if err != nil {
+				log.Println("Advertencia: No se pudo cargar el archivo .env. Las variables deben estar en el entorno.")
+			}
+		}
 	}
 
 	// Inicializa la conexión con Supabase

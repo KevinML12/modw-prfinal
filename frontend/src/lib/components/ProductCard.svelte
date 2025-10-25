@@ -1,120 +1,180 @@
+<!-- frontend/src/lib/components/ProductCard.svelte -->
 <script>
-  import { cart } from '$lib/stores/cart.store.js';
-  import { goto } from '$app/navigation';
-  
-  export let product;
-  
-  let isHovered = false;
+	import ProductGallery from './ProductGallery.svelte';
+	import { cart } from '$lib/stores/cart.store.js';
 
-  async function handleAddToCart(e) {
-    e.stopPropagation();
-    cart.addProduct(product);
-    // TODO: Mostrar toast de confirmación
-    console.log('Producto agregado al carrito:', product.name);
-  }
+	let { product } = $props();
 
-  async function handleViewDetails() {
-    await goto(`/product/${product.id}`);
-  }
+	// Parsear images de JSON string a array
+	// Si no existe el campo images, usar image_url como fallback
+	let images = $derived(
+		product.images 
+			? (typeof product.images === 'string' ? JSON.parse(product.images) : product.images)
+			: [product.image_url?.split('/').pop()?.replace('.jpg', '') || '1']
+	);
+
+	function addToCart() {
+		cart.addItem({
+			id: product.id,
+			name: product.name,
+			price: product.price,
+			image_url: product.image_url,
+			quantity: 1
+		});
+	}
 </script>
 
-<div 
-  class="
-    group relative
-    rounded-2xl 
-    overflow-hidden
-    border-2 border-transparent
-    hover:border-primary-magenta/30 dark:hover:border-[#FF5CAD]/30
-    transition-all duration-300
-    hover:scale-[1.02]
-    hover:shadow-magenta dark:hover:shadow-[0_0_20px_rgba(255,92,173,0.4)]
-    cursor-pointer
-    bg-bg-card dark:bg-[#1E1E2E]
-  "
-  style="aspect-ratio: 3/4;"
-  on:mouseenter={() => isHovered = true}
-  on:mouseleave={() => isHovered = false}
-  on:click={handleViewDetails}
-  on:keydown={(e) => e.key === 'Enter' && handleViewDetails()}
-  role="button"
-  tabindex="0"
->
-  <!-- Imagen de fondo -->
-  <div class="absolute inset-0">
-    {#if product.image_url}
-      <img 
-        src={product.image_url} 
-        alt={product.name}
-        class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-      />
-    {:else}
-      <!-- Placeholder elegante si no hay imagen -->
-      <div class="w-full h-full bg-soft-pink flex items-center justify-center">
-        <div class="text-center">
-          <span class="text-8xl opacity-20">💍</span>
-          <p class="text-text-tertiary mt-4 text-sm">Imagen próximamente</p>
-        </div>
-      </div>
-    {/if}
-  </div>
-  
-  <!-- Overlay gradiente oscuro (visible en hover) -->
-  <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-  
-  <!-- Contenido sobre la imagen (siempre visible con sombra) -->
-  <div class="absolute bottom-0 left-0 right-0 p-5 translate-y-0 transition-all duration-400">
-    <!-- Nombre del producto -->
-    <h3 class="text-white font-bold text-lg mb-1 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] line-clamp-1">
-      {product.name}
-    </h3>
-    
-    <!-- Precio -->
-    <p class="text-white font-bold text-2xl mb-2 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
-      ${product.price.toLocaleString('es-MX')}
-    </p>
-    
-    <!-- Línea decorativa rosa -->
-    <div class="w-10 h-1 bg-primary-magenta dark:bg-[#FF5CAD] dark:shadow-[0_0_10px_rgba(255,92,173,0.3)] rounded-full mb-3 shadow-magenta transition-shadow duration-300 group-hover:dark:shadow-[0_0_15px_rgba(255,92,173,0.5)]"></div>
-    
-    <!-- Descripción (solo visible en hover) -->
-    <p class="text-white/95 text-sm leading-relaxed opacity-0 group-hover:opacity-100 transition-all duration-300 line-clamp-2 drop-shadow-lg max-h-0 group-hover:max-h-20">
-      {product.description}
-    </p>
-  </div>
-  
-  <!-- Badge "NUEVO" si aplica (ejemplo) -->
-  {#if product.id === '1'}
-    <div class="absolute top-4 left-4">
-      <span class="bg-gradient-magenta dark:bg-gradient-dark-magenta text-white text-xs font-bold px-3 py-1 rounded-full shadow-magenta dark:shadow-[0_0_20px_rgba(255,92,173,0.4)] uppercase tracking-wide transition-all duration-300 hover:scale-105 hover:dark:shadow-[0_0_25px_rgba(255,92,173,0.6)]">
-        Nuevo
-      </span>
-    </div>
-  {/if}
-  
-  <!-- Botón de acción rápida (siempre visible) -->
-  <div class="absolute bottom-6 left-6 right-6 z-20">
-    <button 
-      class="
-        w-full
-        bg-gradient-magenta dark:bg-gradient-dark-magenta
-        hover:shadow-magenta dark:hover:shadow-[0_0_20px_rgba(255,92,173,0.5)]
-        text-white
-        font-bold
-        py-3 px-4
-        rounded-xl
-        transition-all duration-300
-        hover:scale-[1.05]
-        active:scale-95
-        flex items-center justify-center gap-2
-      "
-      on:click={handleAddToCart}
-      aria-label="Añadir al carrito"
-      title="Agregar a carrito"
-    >
-      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-      </svg>
-      <span>Agregar</span>
-    </button>
-  </div>
+<div class="product-card">
+	<a href="/products/{product.id}" class="product-link">
+		<ProductGallery images={images} productName={product.name} />
+	</a>
+
+	<div class="product-info">
+		<a href="/products/{product.id}" class="product-name-link">
+			<h3 class="product-name">{product.name}</h3>
+		</a>
+		
+		<p class="product-description">{product.description}</p>
+		
+		<div class="product-footer">
+			<span class="product-price">Q{product.price.toFixed(2)}</span>
+			
+			<button 
+				class="add-to-cart-button"
+				onclick={addToCart}
+				aria-label="Agregar {product.name} al carrito"
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<circle cx="9" cy="21" r="1"></circle>
+					<circle cx="20" cy="21" r="1"></circle>
+					<path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+				</svg>
+				<span>Agregar</span>
+			</button>
+		</div>
+	</div>
 </div>
+
+<style>
+	.product-card {
+		display: flex;
+		flex-direction: column;
+		background: var(--color-background);
+		border: 1px solid var(--color-border);
+		border-radius: 0.75rem;
+		overflow: hidden;
+		transition: all 0.3s ease;
+		height: 100%;
+	}
+
+	.product-card:hover {
+		box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+		transform: translateY(-2px);
+	}
+
+	.product-link {
+		display: block;
+		padding: 1rem;
+		text-decoration: none;
+	}
+
+	.product-info {
+		display: flex;
+		flex-direction: column;
+		padding: 0 1rem 1rem;
+		flex: 1;
+	}
+
+	.product-name-link {
+		text-decoration: none;
+		color: inherit;
+	}
+
+	.product-name {
+		font-size: 1rem;
+		font-weight: 600;
+		color: var(--color-text);
+		margin: 0 0 0.5rem 0;
+		line-height: 1.3;
+		transition: color 0.2s;
+	}
+
+	.product-name-link:hover .product-name {
+		color: var(--color-primary);
+	}
+
+	.product-description {
+		font-size: 0.875rem;
+		color: var(--color-text-secondary);
+		margin: 0 0 1rem 0;
+		line-height: 1.5;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		flex: 1;
+	}
+
+	.product-footer {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-top: auto;
+	}
+
+	.product-price {
+		font-size: 1.25rem;
+		font-weight: 700;
+		color: var(--color-primary);
+	}
+
+	.add-to-cart-button {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.625rem 1rem;
+		background: var(--color-primary);
+		color: white;
+		border: none;
+		border-radius: 0.5rem;
+		font-weight: 600;
+		font-size: 0.875rem;
+		cursor: pointer;
+		transition: all 0.2s;
+		white-space: nowrap;
+	}
+
+	.add-to-cart-button:hover {
+		background: var(--color-primary-dark);
+		transform: scale(1.05);
+	}
+
+	.add-to-cart-button:active {
+		transform: scale(0.98);
+	}
+
+	@media (max-width: 640px) {
+		.product-name {
+			font-size: 0.9375rem;
+		}
+
+		.product-description {
+			font-size: 0.8125rem;
+		}
+
+		.product-price {
+			font-size: 1.125rem;
+		}
+
+		.add-to-cart-button {
+			padding: 0.5rem 0.75rem;
+			font-size: 0.8125rem;
+		}
+
+		.add-to-cart-button svg {
+			width: 16px;
+			height: 16px;
+		}
+	}
+</style>

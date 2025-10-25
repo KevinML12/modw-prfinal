@@ -25,10 +25,21 @@ services:
       - "8080:8080"
     volumes:
       - ./backend:/app
+      - ./.env:/root/.env
+    working_dir: /app
     environment:
       SUPABASE_URL: ${SUPABASE_URL}
       SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}  
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}                 
       SUPABASE_JWT_SECRET: ${SUPABASE_JWT_SECRET}
+      DATABASE_URL: ${DATABASE_URL}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_SSLMODE: ${DB_SSLMODE}
       GIN_MODE: debug
       MEILI_HOST: http://meilisearch:7700
       MEILI_MASTER_KEY: unaclavesupersecreta123
